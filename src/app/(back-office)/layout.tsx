@@ -7,17 +7,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className=" flex">
+    <div className=" flex ">
       {/* SideBar */}
        <SideBar/>
 
       <div className=" w-full">
         {/* Header */}
         <NavBar/>
-        <h2>Header</h2>
+ 
       
         {/* main */}
-        <main>{children}</main>
+        <main  className="p-8 bg-slate-950  text-slate-50 min-h-screen">{children}</main>
       </div>
     </div>
   );
