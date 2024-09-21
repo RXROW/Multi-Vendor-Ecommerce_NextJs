@@ -70,7 +70,7 @@ const WeeklySalesCharts = () => {
   const [chartToDisplay, setChartToDisplay] = useState<string>("sales");
 
   return (
-    <div className="bg-slate-700 p-8 rounded-lg">
+    <div className="dark:bg-slate-700 bg-white p-8 rounded-lg border border-green-400/50">
       <h2 className="text-xl font-semibold mb-2">Weekly Sales Charts</h2>
       <div className="p-4">
         {/* Tabs */}

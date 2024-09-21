@@ -35,7 +35,7 @@ export const data = {
 
 const BestSellingProductsChart = () => {
   return (
-    <div className= ' bg-slate-700 p-8 rounded-lg '>
+    <div className= ' dark:bg-slate-700 bg-white p-8 rounded-lg border border-green-400/50 '>
       <h2 className=' text-xl font-semibold mb-2 '>Best Selling Chart</h2>
       <Pie data={data} />
        </div>
