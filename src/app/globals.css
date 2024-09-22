@@ -10,25 +10,22 @@ body {
 
 
 ::-webkit-scrollbar {
-  width: 1px;  
+  width: 4px;  
 }
 
 /* Scrollbar track */
 ::-webkit-scrollbar-track {
-  background: #000004; /* color of the track */
+  background: #252551; /* color of the track */
  
 }
 
 /* Scrollbar thumb (the moving part) */
 ::-webkit-scrollbar-thumb {
-  background-color: #00114a; /* color of the thumb */
+  background-color: #294560; /* color of the thumb */
   
 }
 
-/* Scrollbar thumb on hover */
-::-webkit-scrollbar-thumb:hover {
-  background-color: #555; /* darker color on hover */
-}
+ 
 @layer base {
   :root {
   --background: 0 0% 100%;

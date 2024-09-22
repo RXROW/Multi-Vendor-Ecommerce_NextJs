@@ -8,7 +8,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [showSidebar, setShowSidebar] = useState<boolean>(false);
+  const [showSidebar, setShowSidebar] = useState<boolean>(true);
 
   return (
     <div className="flex">
