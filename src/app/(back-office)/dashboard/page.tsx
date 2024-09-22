@@ -6,7 +6,7 @@ import SmallCards from "@/components/back-office/SmallCards";
 
 const Dashboard = () => {
   return (
-    <div >
+    <div>
       <Heading title=" Dashboard Overview" />
       {/* Large Cards */}
       <LargeCards/>
