@@ -1,9 +1,50 @@
+"use client";
 import FormHeader from "@/components/back-office/FormHeader";
+import ImageInput from "@/components/FormInputs/ImageInput";
+import SubmitButton from "@/components/FormInputs/SubmitButton";
+import TextareaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
- 
-import React from "react";
+import { makePostRequest } from "@/lib/apiRequest";
+import { generateSlug } from "@/lib/generateSlug";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 
-const New_Category = () => {
+export default function NewCategory() {
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+
+
+  const {
+    register,
+    watch,
+    reset,
+ 
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      isActive: true,
+    },
+  });
+
+  const router = useRouter();
+  const isActive = watch("isActive");
+  function redirect() {
+    router.push("/dashboard/categories");
+  }
+
+  //  Handle form submission
+  async function onSubmit(data: any) {
+    setLoading(true)
+    const slug = generateSlug(data.title);
+    data.slug = slug;
+
+    data.imageUrl = imageUrl;
+    console.log(data);
+    makePostRequest(setLoading , "api/categories", data ,"Category" , reset )
+  }
+
   return (
     <div>
       <FormHeader title="New Category" />
@@ -30,19 +71,21 @@ const New_Category = () => {
             endpoint="categoryImageUploader"
             label="Category Image"
           />
-          <ToggleInput
+          {/* <ToggleInput
             label="Publish your Category"
             name="isActive"
             trueTitle="Active"
             falseTitle="Draft"
             register={register}
-          />
+          /> */}
         </div>
 
-   
+        <SubmitButton
+          isLoading={loading}
+          buttonTitle="Create Category"
+          loadingButtonTitle="Creating category, please wait..."
+        />
       </form>
     </div>
   );
-};
-
-export default New_Category;
+}

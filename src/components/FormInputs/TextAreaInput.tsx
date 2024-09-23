@@ -1,43 +1,40 @@
-interface TextInputProps {
+"use client";
+
+interface TextareaInputProps {
   label: string;
   name: string;
   register: any;
   errors: any;
   isRequired?: boolean;
-  type?: string;
   className?: string;
-  defaultValue?: string;
 }
 
-export default function TextInput({
+export default function TextareaInput({
   label,
   name,
   register,
   errors,
   isRequired = true,
-  type = "text",
   className = "sm:col-span-2",
-  defaultValue = "",
-}: TextInputProps) {
+}: TextareaInputProps) {
   return (
     <div className={className}>
       <label
         htmlFor={name}
-        className="block text-sm font-semibold leading-6 mb-2"
+        className="block text-sm font-medium leading-6 mb-2"
       >
         {label}
       </label>
       <div className="mt-2">
-        <input
+        <textarea
           {...register(name, { required: isRequired ? `${label} is required` : false })}
-          type={type}
           name={name}
           id={name}
-          defaultValue={defaultValue}
-          autoComplete={name}
-          className={`block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-slate-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-700 dark:focus:ring-lime-500 text-sm sm:leading-6 dark:bg-transparent dark:text-slate-100 ${
+          rows={3}
+          className={`block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-slate-500 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-lime-700 dark:focus:ring-lime-500 sm:text-sm sm:leading-6 dark:bg-transparent dark:text-slate-100 ${
             errors[name] ? "ring-red-600 focus:ring-red-600" : ""
           }`}
+          defaultValue={""}
           placeholder={`Type the ${label.toLowerCase()}`}
         />
         {errors[name] && (
