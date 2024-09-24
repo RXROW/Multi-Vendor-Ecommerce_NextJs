@@ -49,9 +49,9 @@ export default function SideBar({ showSidebar, setShowSidebar }:any){
       href: "/dashboard/markets",
     },
     {
-      title: "Farmers",
+      title: "Suppliers",
       icon: HandCoins,
-      href: "/dashboard/farmers",
+      href: "/dashboard/suppliers",
     },
     {
       title: "Orders",
@@ -114,7 +114,7 @@ export default function SideBar({ showSidebar, setShowSidebar }:any){
     <div
       className={
         showSidebar
-          ? "mt-16 md:block md:mt-0 dark:bg-slate-800 bg-slate-50 space-y-6 w-64 h-screen text-slate-800 dark:text-slate-300 fixed left-0 top-0 shadow-md overflow-y-scroll"
+          ? "mt-16 md:block md:mt-0 dark:bg-slate-800   space-y-6 w-64 h-screen text-slate-800 dark:text-slate-300 fixed left-0 top-0 shadow-md overflow-y-scroll"
           : "hidden   dark:bg-slate-800 bg-slate-50 space-y-6 w-64 h-screen text-slate-800 dark:text-slate-300 fixed left-0 top-0 shadow-md overflow-y-scroll"
       }
     >
@@ -182,7 +182,7 @@ export default function SideBar({ showSidebar, setShowSidebar }:any){
               className={
                 item.href == pathname
                   ? "flex items-center space-x-3 px-6 py-2  border-l-4 border-green-500 text-green-600"
-                  : "flex items-center space-x-3 px-6 py-2"
+                  : "flex items-center space-x-3 px-6 py-2 "
               }
             >
               <Icon />
