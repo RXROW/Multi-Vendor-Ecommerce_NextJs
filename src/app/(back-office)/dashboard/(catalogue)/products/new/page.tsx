@@ -1,7 +1,7 @@
 "use client";
 
- 
 import FormHeader from "@/components/back-office/FormHeader";
+import ArrayTagsItemsInput from "@/components/FormInputs/ArrayTagsItemsInput";
 import ImageInput from "@/components/FormInputs/ImageInput";
 import SelectInput from "@/components/FormInputs/SelectInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
@@ -74,7 +74,7 @@ export default function NewProduct() {
   // Watch it to be change off and on
   const isActive = watch("isActive");
 
-  async function onSubmit(data:any) {
+  async function onSubmit(data: any) {
     {
       /* 
       -id => auto()
@@ -167,13 +167,19 @@ export default function NewProduct() {
             label="Product Image"
           />
           {/* Tags */}
-          {/* <ArrayItemsInput items={tags} setItems={setTags} itemTitle="Tag" />
+
+          <ArrayTagsItemsInput
+            items={tags}
+            setItems={setTags}
+            itemTitle="Tag"
+          />
+
           <TextareaInput
             label="Product Description"
             name="description"
             register={register}
             errors={errors}
-          /> */}
+          />
           <ToggleInput
             label="Publish your Product"
             name="isActive"

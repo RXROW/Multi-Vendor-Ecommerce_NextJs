@@ -14,7 +14,7 @@ const Products = () => {
       {/* Table */}
       {/* Table Actions Export Search Delete */}
       <TableActions />
-      <h2>Coupons</h2>
+      <h2>Products</h2>
     </div>
   );
 };
