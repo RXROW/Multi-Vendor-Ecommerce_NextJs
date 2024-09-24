@@ -15,7 +15,7 @@ export async function makePostRequest(
   data: RequestData,
   resourceName: string,
   reset: ResetFunction,
-  redirect?: RedirectFunction
+  redirect: RedirectFunction
 ): Promise<void> {
   try {
     setLoading(true);
@@ -33,6 +33,7 @@ export async function makePostRequest(
     if (response.ok) {
       toast.success(`New ${resourceName} Created Successfully`);
       reset();
+      redirect(); 
  
     } else {
       if (response.status === 409) {

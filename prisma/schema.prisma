@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Banner {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  link      String
+  imageUrl  String
+  isActive  Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Coupon {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  couponCode String
+  createdAt  DateTime @default(now()) @db.Date // Automatically set to now on creation
+  expiryDate DateTime @db.Date
+  isActive   Boolean  
+  title      String  
+  updatedAt  DateTime @default(now()) @updatedAt @db.Date // Automatically set to now on update
+}

@@ -1,5 +1,4 @@
 "use client";
-
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextInput from "@/components/FormInputs/TextInput";
 import { makePostRequest } from "@/lib/apiRequest";
@@ -9,6 +8,7 @@ import { useRouter } from "next/navigation";
 import FormHeader from "@/components/back-office/FormHeader";
 import { generateCouponCode } from "@/lib/generateCouponCode";
 import { generateIsoFormattedDate } from "@/lib/generateIsoFormattedDate";
+import ToggleInput from "@/components/FormInputs/ToggleInput";
 
 interface NewCouponForm {
   couponCode: string;
@@ -39,14 +39,11 @@ export default function NewCoupon() {
     router.push("/dashboard/coupons");
   };
 
-  const onSubmit: SubmitHandler<NewCouponForm> = async (data) => {
+  const onSubmit: SubmitHandler<any> = async (data:any) => {
     const couponCode = generateCouponCode(data.title, data.expiryDate);
     const isoFormattedDate = generateIsoFormattedDate(data.expiryDate);
-
     data.couponCode = couponCode;
     data.expiryDate = isoFormattedDate;
-
-    console.log(data);
     await makePostRequest(
       setLoading,
       "api/coupons",
@@ -80,14 +77,14 @@ export default function NewCoupon() {
             errors={errors}
             className="w-full"
           />
-          {/* Uncomment this if you have a ToggleInput component
+ 
           <ToggleInput
             label="Publish your Coupon"
             name="isActive"
             trueTitle="Active"
             falseTitle="Draft"
             register={register}
-          /> */}
+          />  
         </div>
 
         <SubmitButton

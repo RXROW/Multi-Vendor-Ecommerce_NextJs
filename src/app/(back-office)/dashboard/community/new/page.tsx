@@ -10,6 +10,7 @@ import TextInput from "@/components/FormInputs/TextInput";
 import ToggleInput from "@/components/FormInputs/ToggleInput";
 import { makePostRequest } from "@/lib/apiRequest";
 import { generateSlug } from "@/lib/generateSlug";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -57,7 +58,10 @@ export default function NewTraining() {
 
   // Watch the "isActive" field
   const isActive = watch("isActive");
-
+  const router = useRouter();
+  const redirect = () => {
+    router.push("/dashboard/community");
+  };
   // Submit handler with type for form data
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     const slug = generateSlug(data.title);
@@ -68,7 +72,7 @@ export default function NewTraining() {
     console.log(data);
 
     // Submit the form data
-    makePostRequest(setLoading, "api/trainings", data, "Training", reset);
+    makePostRequest(setLoading, "api/trainings", data, "Training", reset ,redirect);
 
     // Reset form fields after submission
     setImageUrl("");
