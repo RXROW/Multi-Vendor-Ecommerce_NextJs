@@ -14,11 +14,9 @@ export async function POST(request: NextRequest) {
         isActive,
       },
     });
- 
- 
 
     console.log(newBanner);
-    
+
     // Return success response
     return NextResponse.json(newBanner);
   } catch (error) {
@@ -28,7 +26,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         message: "Failed to create banner",
-     
+      },
+      { status: 500 }
+    );
+  }
+}
+
+
+
+export async function GET(request: NextRequest) {
+  try {
+    const banners = await db.banner.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return NextResponse.json(banners);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        message: "Failed to fetch banner",
+        error,
       },
       { status: 500 }
     );

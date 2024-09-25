@@ -5,6 +5,7 @@ import SelectInput from "@/components/FormInputs/SelectInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
 import TextareaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
+import ToggleInput from "@/components/FormInputs/ToggleInput";
 import { makePostRequest } from "@/lib/apiRequest";
 import { generateSlug } from "@/lib/generateSlug";
 import { useRouter } from "next/navigation";
@@ -47,11 +48,18 @@ export default function NewCategory() {
     setLoading(true);
     const slug = generateSlug(data.title);
     data.slug = slug;
- 
-
     data.imageUrl = imageUrl;
+
+    
     console.log(data);
-    makePostRequest(setLoading, "api/categories", data, "Category", reset);
+    makePostRequest(
+      setLoading,
+      "api/categories",
+      data,
+      "Category",
+      reset,
+      redirect
+    );
   }
 
   return (
@@ -89,13 +97,13 @@ export default function NewCategory() {
             endpoint="categoryImageUploader"
             label="Category Image"
           />
-          {/* <ToggleInput
+          <ToggleInput
             label="Publish your Category"
             name="isActive"
             trueTitle="Active"
             falseTitle="Draft"
             register={register}
-          /> */}
+          />
         </div>
 
         <SubmitButton
