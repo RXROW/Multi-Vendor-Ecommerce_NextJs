@@ -44,7 +44,7 @@ export default function NewBanner() {
       */
     }
     data.imageUrl = imageUrl;
-    console.log(data);
+ 
     makePostRequest(setLoading, "api/banners", data, "Banner", reset, redirect);
     setImageUrl("");
   }
