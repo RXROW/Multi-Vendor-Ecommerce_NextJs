@@ -132,7 +132,6 @@ model User {
 model SupplierProfile {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   code            String
-  contactPerson   String?
   profileImageUrl String?
   email           String
   name            String
@@ -141,13 +140,10 @@ model SupplierProfile {
   physicalAddress String?
   terms           String?
   isActive        Boolean
-  products        String[]
-  landSize        Float
   mainProduct     String
-
+  products        String[]
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @db.ObjectId
-
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   Product   Product[]
