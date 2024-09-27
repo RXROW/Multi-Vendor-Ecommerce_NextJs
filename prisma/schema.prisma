@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,9 +13,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+model Coupon {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  couponCode String
+  expiryDate DateTime
+  isActive   Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Banner {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
   link      String
   imageUrl  String
   isActive  Boolean
@@ -17,61 +34,52 @@ model Banner {
   updatedAt DateTime @updatedAt
 }
 
-model Coupon {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  couponCode String
-  createdAt  DateTime @default(now()) @db.Date  
-  expiryDate DateTime @db.Date
-  isActive   Boolean  
-  title      String  
-  updatedAt  DateTime @default(now()) @updatedAt @db.Date  
-}
+// RelationShip
 
-// --ESLAM--
-// Relationships  
-// One-to-one relationship: user => profile relation
-// One-to-many: category => product relation
-// Many-to-many: market => category relation
-
-// User roles: Admin, User, Supplier, Moderator
+// 1 to 1 relationship --user =>profile
+// 1 to many relationship category=>product
+// many to many relationship market => category
 
 model Category {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  slug        String  @unique
-  imageUrl    String?
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  title      String 
+  slug       String @unique
+  imageUrl  String?
   description String?
-  isActive    Boolean
+  isActive Boolean
+  
+  products  Product[]
+  trainings Training[] 
 
-  products    Product[]
-  trainings   Training[]
+  marketIds String[] @db.ObjectId
+  markets   Market[]   @relation(fields: [marketIds], references: [id])
 
-  marketIds   String[] @db.ObjectId
-  markets     Market[] @relation(fields: [marketIds], references: [id])
-
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
 }
 
+
 model Market {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  slug        String  @unique
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  title       String 
+  slug        String @unique
   logoUrl     String?
   description String?
   isActive    Boolean
-
+  
   categoryIds String[]   @db.ObjectId
   categories  Category[] @relation(fields: [categoryIds], references: [id])
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime? @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime?  @updatedAt
 }
+
+
 
 model Product {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   title          String
-  slug           String    @unique
+  slug           String @unique
   sku            String?
   barcode        String?
   productCode    String?
@@ -87,73 +95,79 @@ model Product {
   description    String?
   isActive       Boolean
   isWholesale    Boolean
+  
+  categoryId String @db.ObjectId
+  category   Category  @relation(fields: [categoryId], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  
+  userId String @db.ObjectId
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade, onUpdate: Cascade)
+  
 
-  categoryId     String    @db.ObjectId
-  category       Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId         String    @db.ObjectId
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  supplierProfileId String  @db.ObjectId
-  supplierProfile   SupplierProfile @relation(fields: [supplierProfileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime? @updatedAt
-}
-
-model SupplierProfile {
-  id              String     @id @default(auto()) @map("_id") @db.ObjectId
-  code            String
-  profileImageUrl String?
-  email           String
-  name            String
-  notes           String?
-  phone           String
-  physicalAddress String?
-  terms           String?
-  isActive        Boolean
-  mainProduct     String
-  products        Product[]  // One-to-many relation with Product
-  userId          String?    @db.ObjectId @unique
-  user            User?      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime?  @updatedAt
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
 }
 
 
-model Training {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  slug        String  @unique
-  imageUrl    String?
-  description String?
-  content     String?
-  isActive    Boolean
-
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String   @db.ObjectId
+model Training{
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  title        String 
+  slug         String @unique
+  imageUrl     String?
+  description  String?
+  content      String?
+  isActive     Boolean
+ 
+  categoryId String @db.ObjectId
+  category   Category?  @relation(fields: [categoryId], references: [id])
+   
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+      
 }
 
-enum UserRole {
+enum UserRole{
   ADMIN
   USER
   SUPPLIER
   MODERATOR
 }
 
+
+
+// User =>Admin,Supplier,Customer,Agent,
 model User {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?
-  email         String?   @unique
-  password      String
-  emailVerified DateTime?
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  name             String?
+  email            String?   @unique
+  password         String   
+  emailVerified    DateTime?
 
-  products      Product[]
-  role          UserRole       @default(USER)
-  supplierProfile SupplierProfile?
+  products  Product[]
+  role             UserRole  @default(USER)  
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  supplierProfile  SupplierProfile?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
 }
 
+
+model SupplierProfile{
+  id                   String    @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  phone                String
+  email                String
+  profileImageUrl      String?
+  physicalAddress      String?
+  terms                String?
+  notes                String?
+  code                 String
+  products             String[]
+  isActive             Boolean
+
+  userId String @db.ObjectId @unique
+  user User @relation(fields: [userId],references: [id],onDelete: Cascade, onUpdate: Cascade)
+  
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime? @updatedAt
+}

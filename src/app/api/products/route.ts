@@ -1,48 +1,105 @@
-import { NextRequest, NextResponse } from "next/server";
+import db from "@/lib/db";
+import { NextResponse } from "next/server";
 
- 
-interface Product {
-  id: number;
+// Define the expected shape of the product data
+interface ProductData {
   title: string;
   slug: string;
-  images: string[]; 
-  sku: string;
-  barcode: string;
-  description: string;
+  sku?: string;
+  barcode?: string;
+  imageUrl?: string;
   productPrice: number;
-  salePrice: number;
+  salePrice?: number;
+  categoryId: string;
+  supplierId: string;  
+  tags?: string[];
+  userId: string; 
+  description?: string;
   isActive: boolean;
-  categoryId: number | null;  
-  farmerId: number | null;  
-  tags: string[];            
+  isWholesale: boolean;
+  wholesalePrice?: number;
+  wholesaleQty?: number;
+  unit?: string;
+  productCode?: string;
+  productStock: number;
+  qty: number;
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const productData: Product = await request.json();
-    const newProduct: Product = {
-      id: productData.id,
-      title: productData.title,
-      slug: productData.slug,
-      images: productData.images,  
-      sku: productData.sku,
-      barcode: productData.barcode,
-      description: productData.description,
-      productPrice: productData.productPrice,
-      salePrice: productData.salePrice,
-      isActive: productData.isActive,
-      categoryId: productData.categoryId,
-      farmerId: productData.farmerId,
-      tags: productData.tags,      
-    };
+    const {
+      title,
+      slug,
+      sku,
+      barcode,
+      imageUrl,
+      productPrice,
+      salePrice,
+      categoryId,
+      supplierId, 
+      userId,
+      tags,
+      description,
+      isActive,
+      isWholesale,
+      wholesalePrice,
+      wholesaleQty,
+      unit,
+      productCode,
+      productStock,
+      qty,
+    }: ProductData = await request.json();
+
+    // Check if the product already exists in the database
+    const existingProduct = await db.product.findUnique({
+      where: {
+        slug,
+      },
+    });
+
+    if (existingProduct) {
+      return NextResponse.json(
+        {
+          data: null,
+          message: "Product already exists",
+        },
+        { status: 409 }
+      );
+    }
+
+    // Use ProductUncheckedCreateInput (categoryId directly instead of relation)
+    const newProduct = await db.product.create({
+      data: {
+        title,
+        slug,
+        sku,
+        userId,
+        barcode,
+        imageUrl,
+        productPrice: parseFloat(productPrice.toString()),
+        salePrice: salePrice ? parseFloat(salePrice.toString()) : null,
+        categoryId, // Use categoryId directly
+        tags,
+        description,
+        isActive,
+        isWholesale,
+        wholesalePrice: wholesalePrice ? parseFloat(wholesalePrice.toString()) : null,
+        wholesaleQty: wholesaleQty ? parseInt(wholesaleQty.toString()) : null,
+        unit,
+        productCode,
+        productStock: parseInt(productStock.toString()),
+        qty: parseInt(qty.toString()),
+      },
+    });
+
     console.log(newProduct);
     return NextResponse.json(newProduct);
-  } catch (error) {
-    console.error(error);
-   return NextResponse.json(
+  } catch (error: any) {
+    console.log(error);
+    return NextResponse.json(
       {
         message: "Failed to create product",
-        error,
+        error: error.message || error,
       },
       { status: 500 }
     );
