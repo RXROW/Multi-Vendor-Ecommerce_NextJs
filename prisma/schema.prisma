@@ -69,30 +69,58 @@ model Market {
 }
 
 model Product {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  title           String
-  slug            String   @unique
-  imageUrl        String?
-  description     String?
-  isActive        Boolean
-  sku             String?
-  barcode         String?
-  productPrice    Float
-  salePrice       Float
-  tags            String[]
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  title          String
+  slug           String    @unique
+  sku            String?
+  barcode        String?
+  productCode    String?
+  unit           String?
+  productPrice   Float
+  salePrice      Float?
+  wholesalePrice Float?
+  wholesaleQty   Int?
+  productStock   Int
+  qty            Int
+  imageUrl       String?
+  tags           String[]
+  description    String?
+  isActive       Boolean
+  isWholesale    Boolean
 
-  category        Category @relation(fields: [categoryId], references: [id])
-  categoryId      String   @db.ObjectId
+  categoryId     String    @db.ObjectId
+  category       Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  user            User     @relation(fields: [userId], references: [id])
-  userId          String   @db.ObjectId
+  userId         String    @db.ObjectId
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  supplierProfile SupplierProfile? @relation(fields: [supplierProfileId], references: [id])
-  supplierProfileId String? @db.ObjectId
+  supplierProfileId String  @db.ObjectId
+  supplierProfile   SupplierProfile @relation(fields: [supplierProfileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime? @updatedAt
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime? @updatedAt
 }
+
+model SupplierProfile {
+  id              String     @id @default(auto()) @map("_id") @db.ObjectId
+  code            String
+  profileImageUrl String?
+  email           String
+  name            String
+  notes           String?
+  phone           String
+  physicalAddress String?
+  terms           String?
+  isActive        Boolean
+  mainProduct     String
+  products        Product[]  // One-to-many relation with Product
+  userId          String?    @db.ObjectId @unique
+  user            User?      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime?  @updatedAt
+}
+
 
 model Training {
   id          String  @id @default(auto()) @map("_id") @db.ObjectId
@@ -129,22 +157,3 @@ model User {
   updatedAt     DateTime @updatedAt
 }
 
-model SupplierProfile {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  code            String
-  profileImageUrl String?
-  email           String
-  name            String
-  notes           String?
-  phone           String
-  physicalAddress String?
-  terms           String?
-  isActive        Boolean
-  mainProduct     String
-  products        String[]
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String? @unique @db.ObjectId
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt
-  Product   Product[]
-}

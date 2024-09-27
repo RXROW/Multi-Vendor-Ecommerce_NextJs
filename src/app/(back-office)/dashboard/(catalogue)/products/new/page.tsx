@@ -1,200 +1,58 @@
-"use client";
-
+ 
 import FormHeader from "@/components/back-office/FormHeader";
-import ArrayTagsItemsInput from "@/components/FormInputs/ArrayTagsItemsInput";
-import ImageInput from "@/components/FormInputs/ImageInput";
-import SelectInput from "@/components/FormInputs/SelectInput";
-import SubmitButton from "@/components/FormInputs/SubmitButton";
-import TextareaInput from "@/components/FormInputs/TextAreaInput";
-import TextInput from "@/components/FormInputs/TextInput";
-import ToggleInput from "@/components/FormInputs/ToggleInput";
-import { makePostRequest } from "@/lib/apiRequest";
-import { generateSlug } from "@/lib/generateSlug";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import NewProductForm from "@/components/back-office/NewProductForm";
+import { getData } from "@/lib/getData";
 
-export default function NewProduct() {
-  const [imageUrl, setImageUrl] = useState("");
-  const categories = [
-    {
-      id: 1,
-      title: "Category 1",
-    },
-    {
-      id: 2,
-      title: "Category 2",
-    },
-    {
-      id: 3,
-      title: "Category 3",
-    },
-    {
-      id: 4,
-      title: "Category 4",
-    },
-    {
-      id: 5,
-      title: "Category 5",
-    },
-    {
-      id: 6,
-      title: "Category 6",
-    },
-  ];
+export default async function NewProduct() {
+  // Categories and Suppliers
+  // const categoriesData = await getData("categories");
+  // const usersData = await getData("users");
+  // const suppliersData = usersData.filter(
+  //   (user: any) => user.role === "SUPPLIER"
+  // );
+  // const categories = categoriesData.map(
+  //   (category: { id: any; title: string }) => {
+  //     return {
+  //       id: category.id,
+  //       title: category.title,
+  //     };
+  //   }
+  // );
 
-  const farmers = [
-    {
-      id: 1,
-      title: "Farmer 1",
-    },
-    {
-      id: 2,
-      title: "Farmer 2",
-    },
-    {
-      id: 3,
-      title: "Farmer 3",
-    },
-  ];
-  // TAGS
-  const [tags, setTags] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const suppliers = suppliersData.map((supplier: any) => {
+  //   return {
+  //     id: supplier.id,
+  //     title: supplier.name,
+  //   };
+  // });
 
-  const {
-    register,
-    reset,
-    watch,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      isActive: true,
-    },
-  });
-  // Watch it to be change off and on
-  const isActive = watch("isActive");
+  const categoriesData = await getData("categories");
+  const usersData = await getData("users");
 
-  async function onSubmit(data: any) {
-    {
-      /* 
-      -id => auto()
-      -title
-      -sku
-      -barcode
-      -productPrice
-      -salePrice
-      -categoryId
-      -farmerId
-      -description
-      -slug => auto()
-      -imageUrl
-      -tags[]
-      */
-    }
-    const slug = generateSlug(data.title);
-    data.slug = slug;
-    data.imageUrl = imageUrl;
-    data.tags = tags;
-    console.log(data);
-    makePostRequest(setLoading, "api/products", data, "Product", reset);
-    setImageUrl("");
+  if (!categoriesData || !usersData) {
+    return <div>Error loading data</div>;
   }
+
+  const suppliersData = Array.isArray(usersData)
+    ? usersData.filter((user: any) => user.role === "SUPPLIER")
+    : [];
+
+  const categories = Array.isArray(categoriesData)
+    ? categoriesData.map((category: { id: any; title: string }) => ({
+        id: category.id,
+        title: category.title,
+      }))
+    : [];
+
+  const suppliers = suppliersData.map((supplier: any) => ({
+    id: supplier.id,
+    title: supplier.name,
+  }));
 
   return (
     <div>
       <FormHeader title="New Product" />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-4xl p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700 mx-auto my-3"
-      >
-        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-          <TextInput
-            label="Product Title"
-            name="title"
-            register={register}
-            errors={errors}
-          />
-          <TextInput
-            label="Product SKU"
-            name="sku"
-            register={register}
-            errors={errors}
-            className="w-full"
-          />
-          <TextInput
-            label="Product Barcode"
-            name="barcode"
-            register={register}
-            errors={errors}
-            className="w-full"
-          />
-          <TextInput
-            label="Product Price (Before Discount)"
-            name="productPrice"
-            type="number"
-            register={register}
-            errors={errors}
-            className="w-full"
-          />
-          <TextInput
-            label="Product Sale Price (Discounted)"
-            name="salePrice"
-            type="number"
-            register={register}
-            errors={errors}
-            className="w-full"
-          />
-          <SelectInput
-            label="Select Category"
-            name="categoryId"
-            register={register}
-            errors={errors}
-            className="w-full"
-            options={categories}
-          />
-          <SelectInput
-            label="Select Farmer"
-            name="farmerId"
-            register={register}
-            errors={errors}
-            className="w-full"
-            options={farmers}
-          />
-          <ImageInput
-            imageUrl={imageUrl}
-            setImageUrl={setImageUrl}
-            endpoint="productImageUploader"
-            label="Product Image"
-          />
-          {/* Tags */}
-
-          <ArrayTagsItemsInput
-            items={tags}
-            setItems={setTags}
-            itemTitle="Tag"
-          />
-
-          <TextareaInput
-            label="Product Description"
-            name="description"
-            register={register}
-            errors={errors}
-          />
-          <ToggleInput
-            label="Publish your Product"
-            name="isActive"
-            trueTitle="Active"
-            falseTitle="Draft"
-            register={register}
-          />
-        </div>
-
-        <SubmitButton
-          isLoading={loading}
-          buttonTitle="Create Product"
-          loadingButtonTitle="Creating product, please wait.."
-        />
-      </form>
+      <NewProductForm categories={categories} suppliers={suppliers} />
     </div>
   );
 }
