@@ -57,7 +57,7 @@ export default function NewSupplierForm({ user }: any) {
     const code = generateUserCode("SEF", data.name);
     data.code = code;
     data.products = products;
-    data.userId = user.id;
+    data.userId = user?.id || null;
     data.profileImageUrl = profileImageUrl;
     console.log(data);
 

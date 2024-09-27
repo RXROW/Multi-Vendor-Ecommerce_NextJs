@@ -5,14 +5,16 @@ export async function POST(request: Request) {
   try {
     const supplierData = await request.json();
 
+    // Define required fields
     const requiredFields = [
       "email",
       "name",
       "phone",
       "mainProduct",
       "code",
-      "userId",
     ];
+
+    // Check for missing required fields
     for (const field of requiredFields) {
       if (!supplierData[field]) {
         return NextResponse.json(
@@ -20,6 +22,11 @@ export async function POST(request: Request) {
           { status: 400 }
         );
       }
+    }
+
+    if (!supplierData.userId) {
+      console.warn("Warning: userId is missing. Setting to null.");
+      supplierData.userId = null;  // Set to null if userId is optional
     }
 
     const newSupplierProfile = await db.supplierProfile.create({
@@ -35,7 +42,7 @@ export async function POST(request: Request) {
         profileImageUrl: supplierData.profileImageUrl,
         mainProduct: supplierData.mainProduct,
         products: supplierData.products,
-        userId: supplierData.userId,
+        userId: supplierData.userId,  // Now properly handled
       },
     });
 
@@ -51,6 +58,7 @@ export async function POST(request: Request) {
     );
   }
 }
+
  
 export async function GET(request: Request) {
   try {
