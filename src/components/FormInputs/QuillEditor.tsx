@@ -1,21 +1,19 @@
-import React from "react";
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-// Define types for props
-interface QuillEditorProps {
+type QuilEditorState = {
   label: string;
-  className?: string;
-  value: string;
-  onChange: (content: string) => void;
-}
+  value: any;
+  onChange: any;
+  className?: any;
+};
 
-export default function QuillEditor({
+export default function QuilEditor({
   label,
-  className = "sm:col-span-2",
   value,
   onChange,
-}: QuillEditorProps) {
+  className = "sm:col-span-2",
+}: QuilEditorState) {
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
@@ -47,7 +45,7 @@ export default function QuillEditor({
     <div className={className}>
       <label
         htmlFor="content"
-        className="block text-sm font-medium leading-6 mb-2"
+        className="block text-sm font-medium leading-6 text-gray-900 dark:text-slate-50 mb-2"
       >
         {label}
       </label>
@@ -56,8 +54,7 @@ export default function QuillEditor({
         value={value}
         onChange={onChange}
         modules={modules}
-        formats={formats}
-        className="dark:bg-slate-300 text-gray-800"
+        // formats={formats}
       />
     </div>
   );

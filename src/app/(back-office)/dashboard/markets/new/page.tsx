@@ -1,113 +1,56 @@
 "use client";
 
-import FormHeader from "@/components/back-office/FormHeader";
-import ImageInput from "@/components/FormInputs/ImageInput";
-import SelectInput from "@/components/FormInputs/SelectInput";
-import SubmitButton from "@/components/FormInputs/SubmitButton";
-import TextareaInput from "@/components/FormInputs/TextAreaInput";
-import TextInput from "@/components/FormInputs/TextInput";
-import ToggleInput from "@/components/FormInputs/ToggleInput";
-import { makePostRequest } from "@/lib/apiRequest";
-import { generateSlug } from "@/lib/generateSlug";
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import NewMarketForm from "@/components/back-office/NewMarketForm";
+import { useEffect, useState } from "react";
+import { getData } from "@/lib/getData";
 
+ 
+interface Category {
+  id: string;
+  title: string;
+}
+ 
 export default function NewMarket() {
-  const [logoUrl, setLogoUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const categories = [
-    { id: 1, title: "Category 1" },
-    { id: 2, title: "Category 2" },
-    { id: 3, title: "Category 3" },
-    { id: 4, title: "Category 4" },
-    { id: 5, title: "Category 5" },
-    { id: 6, title: "Category 6" },
-  ];
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+   
+        const [categoriesData] = await Promise.all([getData("categories")]);
+ 
+        if (!categoriesData) {
+          throw new Error("Error loading data");
+        }
+ 
+        const mappedCategories: Category[] = Array.isArray(categoriesData)
+          ? categoriesData.map((category: { id: string; title: string }) => ({
+              id: category.id,
+              title: category.title,
+            }))
+          : [];
+        setCategories(mappedCategories);
+        setLoading(false);
+      } catch (error: any) {
+        console.error("Error loading data", error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
 
-  const {
-    register,
-    reset,
-    watch,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      isActive: true,
-    },
-  });
-  // Watch it to be change off and on
-  const isActive = watch("isActive");
+    fetchData();
+  }, []); 
 
-  async function onSubmit(data: any) {
-    {
-      /* 
-      -id => auto()
-      -title
-      -slug => auto()
-      -logo
-      -description
-      */
-    }
-    const slug = generateSlug(data.title);
-    data.slug = slug;
-    data.logoUrl = logoUrl;
-    console.log(data);
-    makePostRequest(setLoading, "api/markets", data, "Market", reset);
-    setLogoUrl("");
+ 
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
-  return (
-    <div>
-      <FormHeader title="New Market" />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-4xl p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700 mx-auto my-3"
-      >
-        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-          <TextInput
-            label="Market Title"
-            name="title"
-            register={register}
-            errors={errors}
-            className="w-full"
-          />
-          <SelectInput
-            label="Select Categories"
-            name="categoryIds"
-            register={register}
-            errors={errors}
-            className="w-full"
-            options={categories}
-            multiple={true}
-          />
-          {/* Configure endpoint in the core.js */}
-          <ImageInput
-            imageUrl={logoUrl}
-            setImageUrl={setLogoUrl}
-            endpoint="marketLogoUploader"
-            label="Market Logo"
-          />
-          <TextareaInput
-            label="Market Description"
-            name="description"
-            register={register}
-            errors={errors}
-          />
-          <ToggleInput
-            label="Market Status"
-            name="isActive"
-            trueTitle="Active"
-            falseTitle="Draft"
-            register={register}
-          />
-        </div>
+ 
+  if (error) {
+    return <div>{error}</div>;
+  }
 
-        <SubmitButton
-          isLoading={loading}
-          buttonTitle="Create Market"
-          loadingButtonTitle="Creating market, please wait.."
-        />
-      </form>
-    </div>
-  );
+  return <NewMarketForm  categories={categories} />;
 }

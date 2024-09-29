@@ -1,12 +1,11 @@
 import db from "@/lib/db";
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 
 export async function POST(request: Request) {
   try {
     const supplierData = await request.json();
-
-    // Define required fields
-    const requiredFields = [
+     const requiredFields = [
       "email",
       "name",
       "phone",
@@ -14,8 +13,7 @@ export async function POST(request: Request) {
       "code",
     ];
 
-    // Check for missing required fields
-    for (const field of requiredFields) {
+     for (const field of requiredFields) {
       if (!supplierData[field]) {
         return NextResponse.json(
           { message: `Missing required field: ${field}` },
@@ -24,63 +22,55 @@ export async function POST(request: Request) {
       }
     }
 
-    if (!supplierData.userId) {
+     if (!supplierData.userId) {
       console.warn("Warning: userId is missing. Setting to null.");
-      supplierData.userId = null;  // Set to null if userId is optional
+      supplierData.userId = null; 
     }
 
-    const newSupplierProfile = await db.supplierProfile.create({
+     const newSupplierProfile = await db.supplierProfile.create({
       data: {
         code: supplierData.code,
         email: supplierData.email,
         name: supplierData.name,
-        notes: supplierData.notes || null,
+        notes: supplierData.notes ?? null,
         phone: supplierData.phone,
-        physicalAddress: supplierData.address || null,
-        terms: supplierData.terms || null,
+        physicalAddress: supplierData.physicalAddress ?? null,
+        terms: supplierData.terms ?? null,
         isActive: supplierData.isActive ?? true,
-        profileImageUrl: supplierData.profileImageUrl,
+        profileImageUrl: supplierData.profileImageUrl ?? null,
         mainProduct: supplierData.mainProduct,
         products: supplierData.products,
-        userId: supplierData.userId,  // Now properly handled
+        userId: supplierData.userId,
       },
     });
 
     return NextResponse.json(newSupplierProfile, { status: 201 });
   } catch (error: any) {
     console.error("Error creating supplier profile:", error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+       const targetField= error.meta?.target;
+
+      if (targetField === "email") {
+        return NextResponse.json(
+          { message: "Duplicate entry error: The email is already in use." },
+          { status: 409 }
+        );
+      } else if (targetField === "userId") {
+        return NextResponse.json(
+          { message: "Duplicate entry error: The userId is already in use." },
+          { status: 409 }
+        );
+      } else {
+        return NextResponse.json(
+          { message: "Duplicate entry error: Unique constraint violation." },
+          { status: 409 }
+        );
+      }
+    }
+
     return NextResponse.json(
       {
         message: "Failed to create supplier profile",
-        error: error.message || "Unknown error",
-      },
-      { status: 500 }
-    );
-  }
-}
-
- 
-export async function GET(request: Request) {
-  try {
-    const profiles = await db.supplierProfile.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    if (profiles.length === 0) {
-      return NextResponse.json(
-        { message: "No supplier profiles found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(profiles, { status: 200 });
-  } catch (error: any) {
-    console.error("Error fetching supplier profiles:", error);
-    return NextResponse.json(
-      {
-        message: "Failed to fetch supplier profiles",
         error: error.message || "Unknown error",
       },
       { status: 500 }
