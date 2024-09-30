@@ -7,7 +7,7 @@ import ThemeSwitcherBtn from "../ThemeSwitcher";
 
 const NavBar = () => {
   return (
-    <div className="bg-slate-100 dark:bg-slate-700">
+    <div className="  bg-slate-100 dark:bg-slate-700">
       <div className="flex items-center justify-between py-3 max-w-6xl mx-auto gap-8">
         <Link className="" href="/">
     <Image src={logo} width={100} height={100} alt="logo"/>

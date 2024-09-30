@@ -16,20 +16,14 @@ export async function POST(request: NextRequest) {
   try {
     const { title, logoUrl, description, isActive, categoryIds } =
       await request.json();
-
      let slug = generateSlug(title);
-
      slug = await generateUniqueSlug(slug);
-
- 
     if (!categoryIds || !Array.isArray(categoryIds)) {
       return NextResponse.json(
         { message: "Invalid category IDs provided" },
         { status: 400 }
       );
     }
-
- 
     const newMarket = await db.market.create({
       data: {
         title,
@@ -40,7 +34,6 @@ export async function POST(request: NextRequest) {
         categoryIds,
       },
     });
-
     return NextResponse.json(newMarket, { status: 201 });
   } catch (error) {
     console.error("Error creating market:", error);
