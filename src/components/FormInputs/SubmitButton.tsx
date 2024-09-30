@@ -5,6 +5,7 @@ export default function SubmitButton({
   isLoading = false,
   buttonTitle,
   loadingButtonTitle,
+  className,
 }:any) {
   return (
     <div className="sm:col-span-1">
@@ -36,10 +37,10 @@ export default function SubmitButton({
       ) : (
         <button
           type="submit"
-          className="inline-flex items-center px-4 py-2 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-slate-800 rounded-lg focus:ring-4 focus:ring-slate-300 dark:focus:ring-green-900 hover:bg-slate-900 dark:bg-green-600 dark:hover:bg-green-700"
+          className={`inline-flex items-center px-4 py-2 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-slate-800 rounded-lg focus:ring-4 focus:ring-slate-300 dark:focus:ring-green-900 hover:bg-slate-900 dark:bg-green-600 dark:hover:bg-green-700  ${className}` }
         >
-          <Plus className="w-5 h-5 mr-2" />
-          <span>{buttonTitle}</span>
+           
+          <span className=" text-center mx-auto">{buttonTitle}</span>
         </button>
       )}
     </div>
