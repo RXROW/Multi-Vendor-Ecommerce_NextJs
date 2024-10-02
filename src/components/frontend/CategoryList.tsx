@@ -20,10 +20,10 @@ const CategoryList: React.FC<CategoryProps> = ({ category }) => {
           See All
         </Link>
       </div>
-      <div className="py-10">
-        {/* Uncomment and pass products if available */}
+ 
+ 
         <CategoryCarousel products={category.products} />
-      </div>
+ 
     </div>
   );
 };
