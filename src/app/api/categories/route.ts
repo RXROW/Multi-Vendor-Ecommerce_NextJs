@@ -33,6 +33,9 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: "desc",
       },
+      include:{
+        products:true,
+      }
     });
 
     return NextResponse.json(categories, { status: 200 });

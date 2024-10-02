@@ -77,3 +77,23 @@ export async function POST(request: Request) {
     );
   }
 }
+  
+export async function GET(request: any) {
+  try {
+    const suppliers = await db.supplierProfile.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return NextResponse.json(suppliers);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        message: "Failed to Fetch suppliers",
+        error,
+      },
+      { status: 500 }
+    );
+  }
+}

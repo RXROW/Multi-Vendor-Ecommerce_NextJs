@@ -1,7 +1,10 @@
 import Link from "next/link";
 import TrainingCarousel from "./TrainingCarousel";
+import { getData } from "@/lib/getData";
 
 export default async function CommunityTrainings() {
+  // const trainings = await getData("trainings");
+  
   return (
     <div className=" bg-white border border-gray-300 rounded-sm dark:bg-gray-700 dark:border-gray-700 text-slate-800 overflow-hidden my-10 ">
       <div

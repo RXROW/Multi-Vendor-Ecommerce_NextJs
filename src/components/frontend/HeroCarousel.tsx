@@ -9,7 +9,7 @@ import "swiper/css/navigation";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "./HeroCarousel.css"; // Import the regular CSS file
 
-export default function HeroCarousel() {
+export default function HeroCarousel({ banners }: any) {
   return (
     <Swiper
       spaceBetween={30}
@@ -19,41 +19,21 @@ export default function HeroCarousel() {
       modules={[Autoplay, Pagination, Navigation]}
       className="mySwiper" // Now referencing the class from regular CSS
     >
-      <SwiperSlide>
-        <Link href="#" className="swiperSlideLink">
-          <Image
-            src="/1.png"
-            alt="Slide 1"
-            width={812}
-            height={684}
-            className="w-full h-full"
-          />
-        </Link>
-      </SwiperSlide>
-
-      <SwiperSlide>
-        <Link href="#" className="swiperSlideLink">
-          <Image
-            src="/2.png"
-            alt="Slide 2"
-            width={812}
-            height={684}
-            className="w-full h-full"
-          />
-        </Link>
-      </SwiperSlide>
-
-      <SwiperSlide>
-        <Link href="#" className="swiperSlideLink">
-          <Image
-            src="/4.png"
-            alt="Slide 3"
-            width={812}
-            height={684}
-            className="w-full h-full"
-          />
-        </Link>
-      </SwiperSlide>
+      {banners.map((banner: any) => {
+        return (
+          <SwiperSlide  key={banner.id}>
+            <Link  href={banner.link} className="min-w-[100%] ">
+              <Image
+                src={banner.imageUrl}
+                alt={banner.title}
+                width={812}
+                height={384}
+                className=" w-full h-full object-cover"
+              />
+            </Link>
+          </SwiperSlide>
+        );
+      })}
     </Swiper>
   );
 }

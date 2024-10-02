@@ -5,7 +5,7 @@ import Link from "next/link";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
-export default function MarketCarousel() {
+export default function MarketCarousel({markets}:any) {
   const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -23,34 +23,7 @@ export default function MarketCarousel() {
       slidesToSlide: 1, // optional, default to 1.
     },
   };
-
-  const markets = [
-    { id: 1, title: "Market 1", image: "/1.png" },
-    { id: 2, title: "Market 2", image: "/2.png" },
-    { id: 3, title: "Market 3", image: "/1.png" },
-    { id: 4, title: "Market 4", image: "/4.png" },
-    { id: 5, title: "Market 5", image: "/4.png" },
-    { id: 6, title: "Market 6", image: "/4.png" },
-    { id: 7, title: "Market 7", image: "/4.png" },
-    { id: 8, title: "Market 8", image: "/4.png" },
-  ];
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
   
- 
   return (
  
       <Carousel
@@ -77,7 +50,7 @@ export default function MarketCarousel() {
             className="rounded-lg flex items-center flex-col"
           >
             <Image
-              src={market.image}
+              src={market.logoUrl}
               alt={market.title}
               width={556}
               height={556}
