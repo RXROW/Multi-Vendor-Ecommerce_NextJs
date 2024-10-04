@@ -1,7 +1,10 @@
 import PageHeader from "@/components/back-office/PageHeader";
-import TableActions from "@/components/back-office/TableAction";
-
-const Coupons = () => {
+import DataTable from "@/components/data-table-components/DataTable";
+import { columns } from "./columns";
+import { getData } from "@/lib/getData";
+ 
+const Coupons = async () => {
+  const coupons = await getData("coupons");
   return (
     <div>
       <PageHeader
@@ -10,9 +13,12 @@ const Coupons = () => {
         href="/dashboard/coupons/new"
       />
       {/* Table */}
-      {/* Table Actions Export Search Delete */}
-      <TableActions />
-      <h2>Coupons</h2>
+ 
+   <div className="py-8">
+        {Array.isArray(coupons) && (
+          <DataTable data={coupons} columns={columns} />
+        )}
+      </div>
     </div>
   );
 };
