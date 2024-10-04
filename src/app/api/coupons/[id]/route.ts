@@ -4,20 +4,17 @@ import { NextResponse } from "next/server";
 
 export async function GET(request, { params: { id } }) {
   try {
-    const category = await db.category.findUnique({
+    const coupon = await db.coupon.findUnique({
       where: {
         id,
       },
-      include: {
-        products: true,
-      },
     });
-    return NextResponse.json(category);
+    return NextResponse.json(coupon);
   } catch (error) {
     console.log(error);
     return NextResponse.json(
       {
-        message: "Failed to Fetch Category",
+        message: "Failed to Fetch Coupon",
         error,
       },
       { status: 500 }
@@ -27,33 +24,33 @@ export async function GET(request, { params: { id } }) {
 
 export async function DELETE(request, { params: { id } }) {
   try {
-    const existingCategory = await db.category.findUnique({
+    const existingCoupon = await db.coupon.findUnique({
       where: {
         id,
       },
     });
 
-    if (!existingCategory) {
+    if (!existingCoupon) {
       return NextResponse.json(
         {
           data: null,
-          message: "Category Not Found",
+          message: "Coupon Not Found",
         },
         { status: 404 }
       );
     }
-    const deleteCategory = await db.category.delete({
+    const deleteCoupon = await db.coupon.delete({
       where: {
         id,
       },
     });
 
-    return NextResponse.json(deleteCategory);
+    return NextResponse.json(deleteCoupon);
   } catch (error) {
     console.log(error);
     return NextResponse.json(
       {
-        message: "Failed to delete the Category",
+        message: "Failed to delete the Coupon",
         error,
       },
       { status: 500 }
@@ -62,17 +59,15 @@ export async function DELETE(request, { params: { id } }) {
 }
 
 // export async function PUT(request, { params: { id } }) {
-//   console.log(id);
 //   try {
-//     const { title, slug, imageUrl, description, isActive } =
-//       await request.json();
-//     const existingCategory = await db.category.findUnique({
+//     const { title, couponCode, expiryDate, isActive } = await request.json();
+//     const existingCoupon = await db.coupon.findUnique({
 //       where: {
 //         id,
 //       },
 //     });
 
-//     if (!existingCategory) {
+//     if (!existingCoupon) {
 //       return NextResponse.json(
 //         {
 //           data: null,
@@ -82,17 +77,17 @@ export async function DELETE(request, { params: { id } }) {
 //       );
 //     }
 
-//     const updatedCategory = await db.category.update({
+//     const updatedCoupon = await db.coupon.update({
 //       where: { id },
-//       data: { title, slug, imageUrl, description, isActive },
+//       data: { title, couponCode, expiryDate, isActive },
 //     });
 
-//     return NextResponse.json(updatedCategory);
+//     return NextResponse.json(updatedCoupon);
 //   } catch (error) {
 //     console.log(error);
 //     return NextResponse.json(
 //       {
-//         message: "Failed to Update Category",
+//         message: "Failed to Update Coupon",
 //         error,
 //       },
 //       { status: 500 }

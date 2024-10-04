@@ -1,7 +1,11 @@
 import PageHeader from "@/components/back-office/PageHeader";
 import TableActions from "@/components/back-office/TableAction";
+import DataTable from "@/components/data-table-components/DataTable";
+import { getData } from "@/lib/getData";
+import { columns } from "./columns";
  
-export default function Suppliers() {
+export default async function Suppliers() {
+  const suppliers = await getData("suppliers");
   return (
     <div>
       {/* Header */}
@@ -12,10 +16,11 @@ export default function Suppliers() {
       />
       {/* Table Actions */}
       {/* Export || Search || Bulk Delete */}
-      <TableActions />
-
+      {/* Table Actions */}
       <div className="py-8">
-        <h2>Table</h2>
+        {Array.isArray(suppliers) && (
+          <DataTable data={suppliers} columns={columns} filterKeys={["name"]} />
+        )}
       </div>
     </div>
   );

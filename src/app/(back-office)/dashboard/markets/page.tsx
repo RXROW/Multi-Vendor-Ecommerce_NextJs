@@ -1,7 +1,10 @@
 import PageHeader from "@/components/back-office/PageHeader";
-import TableActions from "@/components/back-office/TableAction";
-
-const Markets = () => {
+import DataTable from "@/components/data-table-components/DataTable";
+import { getData } from "@/lib/getData";
+import { columns } from "./columns";
+  
+const Markets = async () => {
+  const markets = await getData("markets");
   return (
     <div>
       <PageHeader
@@ -11,8 +14,11 @@ const Markets = () => {
       />
       {/* Table */}
       {/* Table Actions Export Search Delete */}
-      <TableActions />
-      <h2>Markets</h2>
+      <div className="py-8">
+        {Array.isArray(markets) && (
+          <DataTable data={markets} columns={columns} />
+        )}
+      </div>
     </div>
   );
 };
