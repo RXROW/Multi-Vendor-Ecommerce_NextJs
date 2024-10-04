@@ -1,10 +1,12 @@
- 
-
 import PageHeader from "@/components/back-office/PageHeader";
-import TableActions from "@/components/back-office/TableAction";
-import React from "react";
+import DataTable from "@/components/data-table-components/DataTable";
+import { getData } from "@/lib/getData";
 
-const Categories = () => {
+import React from "react";
+import { columns } from "./columns";
+
+const Banners = async () => {
+  const banners = await getData("banners");
   return (
     <div>
       <PageHeader
@@ -13,11 +15,14 @@ const Categories = () => {
         href="/dashboard/banners/new"
       />
       {/* Table */}
-      {/* Table Actions Export Search Delete */}
-      <TableActions />
-      <h2>Banners</h2>
+
+      <div className="py-8">
+        {Array.isArray(banners) && (
+          <DataTable data={banners} columns={columns} />
+        )}
+      </div>
     </div>
   );
 };
 
-export default Categories;
+export default Banners;

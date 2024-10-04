@@ -1,8 +1,14 @@
 import PageHeader from "@/components/back-office/PageHeader";
-import TableActions from "@/components/back-office/TableAction";
+ import { getData } from "@/lib/getData";
 import React from "react";
+ 
+import { columns } from "./columns";
+import DataTable from "@/components/data-table-components/DataTable";
+ 
 
-const Categories = () => {
+const Categories = async () => {
+  const categories=await getData("categories")
+
   return (
     <div>
       <PageHeader
@@ -10,10 +16,12 @@ const Categories = () => {
         linkTitle="Add Category"
         href="/dashboard/categories/new"
       />
-      {/* Table */}
-      {/* Table Actions Export Search Delete */}
-      <TableActions />
-      <h2>Categories</h2>
+ 
+      <div className="py-8">
+        {Array.isArray(categories) && (
+          <DataTable data={categories} columns={columns} />
+        )}
+      </div>
     </div>
   );
 };
