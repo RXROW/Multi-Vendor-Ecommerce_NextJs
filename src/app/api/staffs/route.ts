@@ -21,10 +21,27 @@ export async function POST(req: NextRequest) {
      const body = await req.json();
      const { error, value } = staffSchema.validate(body);
     if (error) {
+      console.log(error.details[0].message )
       return NextResponse.json({ message: error.details[0].message }, { status: 400 });
     }
     const { name, nin, dob, password, email, phone, physicalAddress, notes, isActive, code } = value;
-     console.log("Creating new staff with the following details:", { name, email, phone });
+     
+    const existingStaff = await db.staff.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (existingStaff) {
+      return NextResponse.json(
+        {
+          data: null,
+          message: "Staff already exists",
+        },
+        { status: 409 }
+      );
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newStaff = await db.staff.create({
       data: {

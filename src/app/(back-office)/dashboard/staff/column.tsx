@@ -72,8 +72,8 @@ export const columns = [
         <ActionColumn
           row={row}
           title="Staff"
-          editEndpoint={`staff/update/${staff.id}`}
-          endPoint={`staff/${staff.id}`}
+          editEndpoint={`staffs/update/${staff.id}`}
+          endPoint={`staffs/${staff.id}`}
         />
       );
     },

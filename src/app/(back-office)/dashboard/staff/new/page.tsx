@@ -28,8 +28,6 @@ export default function NewStaff() {
   function redirect() {
     router.push("/dashboard/staff");
   }
-
-
   async function onSubmit(data: any) {
     data.code = generateUserCode("EMSF", data.name);
     await makePostRequest(setLoading, "/api/staffs", data, "Staff", reset, redirect);

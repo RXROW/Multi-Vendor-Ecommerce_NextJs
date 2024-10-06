@@ -1,7 +1,5 @@
 "use client";
-
 import { Checkbox } from "@/components/ui/checkbox";
-
 import DateColumn from "@/components/DataTableColunms/DateColumn";
 import ImageColumn from "@/components/DataTableColunms/ImageColumn";
 import SortableColumn from "@/components/DataTableColunms/SortableColumn";
