@@ -1,10 +1,11 @@
- 
-  
- 
 import PageHeader from "@/components/back-office/PageHeader";
 import TableActions from "@/components/back-office/TableAction";
+import DataTable from "@/components/data-table-components/DataTable";
+import { getData } from "@/lib/getData";
+import { columns } from "./column";
 
-const Staff = () => {
+const Staff = async () => {
+  const staffs = await getData("staffs");
   return (
     <div>
       <PageHeader
@@ -13,9 +14,12 @@ const Staff = () => {
         href="/dashboard/staff/new"
       />
       {/* Table */}
-      {/* Table Actions Export Search Delete */}
-      <TableActions />
-      <h2>Staff</h2>
+ 
+      <div className="py-8">
+        {Array.isArray(staffs) && (
+          <DataTable data={staffs} columns={columns} />
+        )}
+      </div>
     </div>
   );
 };

@@ -171,3 +171,22 @@ model SupplierProfile {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime? @updatedAt
 }
+
+
+
+
+model Staff {
+  id               String      @id  @map("_id")
+  name             String
+  nin              String
+  dob              DateTime
+  password         String
+  email            String   @unique
+  phone            String
+  physicalAddress  String
+  notes            String?
+  isActive         Boolean  @default(true)
+  code             String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
