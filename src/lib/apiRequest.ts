@@ -54,7 +54,7 @@ export async function makePutRequest(
   data: RequestData,
   resourceName: string,
   redirect: RedirectFunction,
-  reset: ResetFunction
+  reset?: ResetFunction
 ): Promise<void> {
   try {
     setLoading(true);
@@ -71,7 +71,6 @@ export async function makePutRequest(
     
     if (response.ok) {
       toast.success(`${resourceName} Updated Successfully`);
-      reset();
       redirect();
     } else {
       toast.error("Something Went wrong");

@@ -61,41 +61,41 @@ export async function DELETE(request, { params: { id } }) {
   }
 }
 
-// export async function PUT(request, { params: { id } }) {
-//   console.log(id);
-//   try {
-//     const { title, slug, imageUrl, description, isActive } =
-//       await request.json();
-//     const existingCategory = await db.category.findUnique({
-//       where: {
-//         id,
-//       },
-//     });
+export async function PUT(request, { params: { id } }) {
+ 
+  try {
+    const { title, slug, imageUrl, description, isActive } =
+      await request.json();
+    const existingCategory = await db.category.findUnique({
+      where: {
+        id,
+      },
+    });
 
-//     if (!existingCategory) {
-//       return NextResponse.json(
-//         {
-//           data: null,
-//           message: `Not Found`,
-//         },
-//         { status: 404 }
-//       );
-//     }
+    if (!existingCategory) {
+      return NextResponse.json(
+        {
+          data: null,
+          message: `Not Found`,
+        },
+        { status: 404 }
+      );
+    }
 
-//     const updatedCategory = await db.category.update({
-//       where: { id },
-//       data: { title, slug, imageUrl, description, isActive },
-//     });
+    const updatedCategory = await db.category.update({
+      where: { id },
+      data: { title, slug, imageUrl, description, isActive },
+    });
 
-//     return NextResponse.json(updatedCategory);
-//   } catch (error) {
-//     console.log(error);
-//     return NextResponse.json(
-//       {
-//         message: "Failed to Update Category",
-//         error,
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
+    return NextResponse.json(updatedCategory);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        message: "Failed to Update Category",
+        error,
+      },
+      { status: 500 }
+    );
+  }
+}

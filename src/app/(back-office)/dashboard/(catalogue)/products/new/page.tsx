@@ -25,39 +25,35 @@ export default function NewProduct() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch data for categories and users
+ 
         const [categoriesData, usersData] = await Promise.all([
           getData("categories"),
           getData("users"),
         ]);
-
-        // If any of the data fetching fails, throw an error
+ 
         if (!categoriesData || !usersData) {
           throw new Error("Error loading data");
         }
 
-        // Filter suppliers from users data based on role
+ 
         const suppliersData = Array.isArray(usersData)
           ? usersData.filter((user: any) => user.role === "SUPPLIER")
           : [];
-
-        // Map categories data into desired format
+ 
         const mappedCategories: Category[] = Array.isArray(categoriesData)
           ? categoriesData.map((category: { id: string; title: string }) => ({
               id: category.id,
               title: category.title,
             }))
           : [];
-
-        // Map suppliers data into desired format
+ 
         const mappedSuppliers: Supplier[] = suppliersData.map(
           (supplier: { id: string; name: string }) => ({
             id: supplier.id,
             title: supplier.name,
           })
         );
-
-        // Update state with fetched data
+ 
         setCategories(mappedCategories);
         setSuppliers(mappedSuppliers);
         setLoading(false);
@@ -69,14 +65,12 @@ export default function NewProduct() {
     };
 
     fetchData();
-  }, []); // Empty dependency array to ensure it runs only once
-
-  // Loading state
+  }, []); 
+ 
   if (loading) {
     return <div>Loading...</div>;
   }
-
-  // Error state
+ 
   if (error) {
     return <div>{error}</div>;
   }

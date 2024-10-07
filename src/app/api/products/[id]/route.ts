@@ -58,39 +58,79 @@ export async function DELETE(request, { params: { id } }) {
   }
 }
 
-// export async function PUT(request, { params: { id } }) {
-//   try {
-//     const { title, couponCode, expiryDate, isActive } = await request.json();
-//     const existingCoupon = await db.coupon.findUnique({
-//       where: {
-//         id,
-//       },
-//     });
+export async function PUT(request, { params: { id } }) {
+  try {
+    const {
+      title,
+      slug,
+      sku,
+      barcode,
+      imageUrl,
+      productPrice,
+      salePrice,
+      categoryId,
+      supplierId,
+      tags,
+      description,
+      isActive,
+      isWholesale,
+      wholesalePrice,
+      wholesaleQty,
+      unit,
+      productCode,
+      productStock,
+      qty,
+    } = await request.json();
+    const existingProduct = await db.product.findUnique({
+      where: {
+        id,
+      },
+    });
 
-//     if (!existingCoupon) {
-//       return NextResponse.json(
-//         {
-//           data: null,
-//           message: `Not Found`,
-//         },
-//         { status: 404 }
-//       );
-//     }
+    if (!existingProduct) {
+      return NextResponse.json(
+        {
+          data: null,
+          message: `Not Found`,
+        },
+        { status: 404 }
+      );
+    }
 
-//     const updatedCoupon = await db.coupon.update({
-//       where: { id },
-//       data: { title, couponCode, expiryDate, isActive },
-//     });
+    const updatedProduct = await db.product.update({
+      where: { id },
+      data: {
+        title,
+        slug,
+        sku,
+        barcode,
+        imageUrl,
+        productPrice,
+        salePrice,
+        categoryId,
+        supplierId,
+        tags,
+        description,
+        isActive,
+        isWholesale,
+        wholesalePrice,
+        wholesaleQty,
+        unit,
+        productCode,
+        productStock,
+        qty,
+      },
+    });
 
-//     return NextResponse.json(updatedCoupon);
-//   } catch (error) {
-//     console.log(error);
-//     return NextResponse.json(
-//       {
-//         message: "Failed to Update Coupon",
-//         error,
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
+    return NextResponse.json(updatedProduct);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      {
+        message: "Failed to Update Product",
+        error,
+      },
+      { status: 500 }
+    );
+  }
+}

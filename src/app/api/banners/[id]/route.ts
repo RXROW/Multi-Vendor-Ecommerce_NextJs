@@ -31,7 +31,43 @@ export async function GET(request: NextRequest, { params: { id } }: Params) {
     return NextResponse.json(
       {
         message: "Failed to Fetch Banner",
-        error: (error as Prisma.PrismaClientKnownRequestError).message,  
+        error: (error as Prisma.PrismaClientKnownRequestError).message,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest, { params: { id } }: Params) {
+  try {
+    const existingBanner = await db.banner.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!existingBanner) {
+      return NextResponse.json(
+        { message: "Banner Not Found" },
+        { status: 404 }
+      );
+    }
+
+    const body = await request.json();
+    const { title, link, imageUrl, isActive } = body;
+    const updatedBanner = await db.banner.update({
+      where: { id },
+      data: { title, link, imageUrl, isActive },
+    });
+
+    return NextResponse.json(updatedBanner);
+  } catch (error: unknown) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        message: "Failed to update the Banner",
+        error: (error as Prisma.PrismaClientKnownRequestError).message,
       },
       { status: 500 }
     );
@@ -69,7 +105,7 @@ export async function DELETE(request: NextRequest, { params: { id } }: Params) {
     return NextResponse.json(
       {
         message: "Failed to delete the Banner",
-        error: (error as Prisma.PrismaClientKnownRequestError).message,  
+        error: (error as Prisma.PrismaClientKnownRequestError).message,
       },
       { status: 500 }
     );
