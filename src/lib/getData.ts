@@ -13,12 +13,11 @@ export async function getData(endpoint: string) {
         console.log(`Error: ${response.statusText} (${response.status})`);
       }
     }
-
-    // Parse the response as JSON only if it was successful
+ 
     const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error fetching data:", error);
-    throw error; // Re-throw the error to handle it in the calling function
+    throw error; 
   }
 }

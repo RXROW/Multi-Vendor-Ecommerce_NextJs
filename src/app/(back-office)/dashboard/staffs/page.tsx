@@ -10,7 +10,7 @@ const Staff = async () => {
       <PageHeader
         title="Staff"
         linkTitle="Add Staff"
-        href="/dashboard/staff/new"
+        href="/dashboard/staffs/new"
       />
       {/* Table */}
  

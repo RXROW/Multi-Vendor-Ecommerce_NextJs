@@ -61,7 +61,7 @@ export default function SideBar({ showSidebar, setShowSidebar }:any){
     {
       title: "Our Staff",
       icon: Handshake,
-      href: "/dashboard/staff",
+      href: "/dashboard/staffs",
     },
     {
       title: "Community",
