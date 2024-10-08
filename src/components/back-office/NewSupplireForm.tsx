@@ -1,16 +1,15 @@
-"use client";
-
+"use client"
 import ImageInput from "@/components/FormInputs/ImageInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
-import TextareaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
 import ToggleInput from "@/components/FormInputs/ToggleInput";
-import { makePostRequest } from "@/lib/apiRequest";
+import { makePostRequest, makePutRequest } from "@/lib/apiRequest";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import ArrayTagsItemsInput from "../FormInputs/ArrayTagsItemsInput";
 import { generateUserCode } from "@/lib/generateUserCode";
+import TextareaInput from "../FormInputs/TextareaInput";
 
 type SupplierFormData = {
   userId: any;
@@ -27,10 +26,16 @@ type SupplierFormData = {
   products?: string[];
 };
 
-export default function NewSupplierForm({ user }: any) {
+type NewSupplierFormProps = {
+  user?: any;  // Assuming user could be any type
+  updateSupplier?: any; // This should match your actual updateSupplier type if you have one
+};
+
+const NewSupplierForm: React.FC<NewSupplierFormProps> = ({ user, updateSupplier }) => {
+  const id = updateSupplier?.id ?? "";
   const [loading, setLoading] = useState(false);
-  const [profileImageUrl, setProfileImageUrl] = useState<string>("");
-  const [products, setProducts] = useState<string[]>([]);
+  const [profileImageUrl, setProfileImageUrl] = useState<string>(user?.profileImageUrl || "");
+  const [products, setProducts] = useState<string[]>(user?.products || []);
 
   const {
     register,
@@ -40,7 +45,7 @@ export default function NewSupplierForm({ user }: any) {
     formState: { errors },
   } = useForm<SupplierFormData>({
     defaultValues: {
-      isActive: true,
+      isActive: user?.isActive || true,
       ...user,
     },
   });
@@ -59,16 +64,25 @@ export default function NewSupplierForm({ user }: any) {
     data.products = products;
     data.userId = user?.id || null;
     data.profileImageUrl = profileImageUrl;
-    console.log(data);
 
-    makePostRequest(
-      setLoading,
-      "/api/suppliers",
-      data,
-      "Supplier Profile",
-      reset,
-      redirect
-    );
+    if (id) {
+      await makePutRequest(
+        setLoading,
+        `/api/suppliers/${id}`,
+        data,
+        "Supplier Profile",
+        redirect
+      );
+    } else {
+      await makePostRequest(
+        setLoading,
+        "api/suppliers",
+        data,
+        "Supplier Profile",
+        reset,
+        redirect
+      );
+    }
   }
 
   return (
@@ -129,11 +143,14 @@ export default function NewSupplierForm({ user }: any) {
           className="w-full"
           isRequired={true}
         />
+
+        {/* Products */}
         <ArrayTagsItemsInput
           items={products}
           setItems={setProducts}
           itemTitle="Products"
         />
+
         {/* Profile Image */}
         <ImageInput
           imageUrl={profileImageUrl}
@@ -172,9 +189,11 @@ export default function NewSupplierForm({ user }: any) {
 
       <SubmitButton
         isLoading={loading}
-        buttonTitle="Create Supplier"
-        loadingButtonTitle="Creating supplier, please wait.."
+        buttonTitle={user ? "Update Supplier" : "Create Supplier"}
+        loadingButtonTitle={user ? "Updating supplier, please wait..." : "Creating supplier, please wait..."}
       />
     </form>
   );
-}
+};
+
+export default NewSupplierForm;

@@ -7,11 +7,11 @@ import FormHeader from "@/components/back-office/FormHeader";
 import ImageInput from "@/components/FormInputs/ImageInput";
 import SelectInput from "@/components/FormInputs/SelectInput";
 import SubmitButton from "@/components/FormInputs/SubmitButton";
-import TextareaInput from "@/components/FormInputs/TextAreaInput";
 import TextInput from "@/components/FormInputs/TextInput";
 import ToggleInput from "@/components/FormInputs/ToggleInput";
-import { makePostRequest } from "@/lib/apiRequest";
+import { makePostRequest, makePutRequest } from "@/lib/apiRequest";
 import { generateSlug } from "@/lib/generateSlug";
+import TextareaInput from "../FormInputs/TextareaInput";
 
 // Type definitions for the form inputs and categories
 interface Category {
@@ -29,11 +29,15 @@ interface FormData {
 }
 
 interface NewMarketFormProps {
-  categories: Category[] | any;
+  categories:any;
+  market?: any; // Optional market object for updating
 }
 
-export default function NewMarketForm({ categories }: NewMarketFormProps) {
-  const [logoUrl, setLogoUrl] = useState<string>("");
+export default function NewMarketForm({
+  categories,
+  market = {},
+}: NewMarketFormProps) {
+  const [logoUrl, setLogoUrl] = useState<string>(market.logoUrl || "");
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -45,39 +49,48 @@ export default function NewMarketForm({ categories }: NewMarketFormProps) {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      isActive: true,
+      title: market.title || "",
+      categoryIds: market.categoryIds || [],
+      description: market.description || "",
+      isActive: market.isActive ?? true,
     },
   });
 
   const isActive = watch("isActive");
 
-  // Function to handle redirect after successful form submission
   const redirect = () => {
     router.push("/dashboard/markets");
   };
 
-  // Form submission handler
   const onSubmit = async (data: FormData) => {
     try {
       const slug = generateSlug(data.title);
       const formData = { ...data, slug, logoUrl };
 
-      // Make the POST request
-      await makePostRequest(setLoading, "api/markets", formData, "Market", reset, redirect);
-      setLogoUrl("");
+      if (market.id) {
+ 
+        await makePutRequest(setLoading, `api/markets/${market.id}`, formData, "Market", redirect);
+      } else {
+ 
+        await makePostRequest(setLoading, "api/markets", formData, "Market", reset, redirect);
+      }
+      setLogoUrl("");  
     } catch (error) {
-      console.error("Error creating market:", error);
+      console.error("Error creating or updating market:", error);
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto my-3">
-      <FormHeader title="New Market" />
+      <div className="mb-5">
+      <FormHeader title={market.id ? "Update Market" : "New Market"} />
+      </div>
+  
 
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-        aria-label="New Market Form"
+        aria-label="Market Form"
       >
         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
           {/* Market Title Input */}
@@ -136,8 +149,8 @@ export default function NewMarketForm({ categories }: NewMarketFormProps) {
         {/* Submit Button */}
         <SubmitButton
           isLoading={loading}
-          buttonTitle="Create Market"
-          loadingButtonTitle="Creating market, please wait..."
+          buttonTitle={market.id ? "Update Market" : "Create Market"}
+          loadingButtonTitle={market.id ? "Updating market, please wait..." : "Creating market, please wait..."}
         />
       </form>
     </div>
