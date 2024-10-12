@@ -1,6 +1,5 @@
 import React from 'react'
 import { getData } from "@/lib/getData";
-import FormHeader from '@/components/back-office/FormHeader';
 import NewStaffFrom from '@/components/back-office/NewStaffForm';
 
 const UpdateStaff = async ({

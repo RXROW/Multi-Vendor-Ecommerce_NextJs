@@ -1,11 +1,15 @@
- 
+"use client";
 import BreadCrump from "@/components/frontend/BreadCrump";
+import CartProduct from "@/components/frontend/CartProduct";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { useSelector } from "react-redux";
 
 export default function Cart() {
+  const cartItems = useSelector((store:any)=>store.cart);
+  console.log("cartItem"+cartItems)
   return (
     <div>
        <BreadCrump/> 
@@ -18,70 +22,10 @@ export default function Cart() {
             <h2 className="uppercase">Price</h2>
           </div>
           <div className="">
-            {/* Cart 1 */}
-            <div className="flex items-center justify-between mt-4 border-b border-slate-300 dark:text-slate-400 text-slate-700 pb-3 font-semibold text-sm">
-              <div className="flex items-center gap-2">
-                <Image
-      src="/pexels-02.jpg"
-        
-                  alt="product image"
-                  width={249}
-                  height={249}
-                  className="rounded-md lg:w-20 lg:h-20 w-14 h-14 object-cover"
-                />
-                <div className="flex flex-col">
-                  <h3>Apple Watch Series 7 - 44mm</h3>
-                  <small>Golden</small>
-                </div>
-              </div>
-              <div className="rounded-xl border border-gray-400 flex gap-3 items-center ">
-                <button className="border-r border-gray-400 py-2 px-4">
-                  <Minus />
-                </button>
-                <p className="flex-grow lg:px-6 px-2">1</p>
-                <button className="border-l border-gray-400 py-2 px-4">
-                  <Plus />
-                </button>
-              </div>
-              <div className="flex items-center space-x-2 ml-3 lg:ml-0">
-                <h4>$259.00</h4>
-                <button>
-                  <Trash2 className="text-red-500 w-5 h-5" />
-                </button>
-              </div>
-            </div>
-            {/* Cart 2 */}
-            <div className="flex items-center justify-between mt-4 border-b border-slate-300 dark:text-slate-400 text-slate-700 pb-3 font-semibold text-sm">
-              <div className="flex items-center gap-2">
-                <Image
-                        src="/pexels-02.jpg"
-        
-                  alt="product image"
-                  width={249}
-                  height={249}
-                  className="rounded-md lg:w-20 lg:h-20 w-14 h-14 object-cover"
-                />
-                <div className="flex flex-col">
-                  <h3>Apple Watch Series 7 - 44mm</h3>
-                  <small>Golden</small>
-                </div>
-              </div>
-              <div className="rounded-xl border border-gray-400 flex gap-3 items-center ">
-                <button className="border-r border-gray-400 py-2 px-4">
-                  <Minus />
-                </button>
-                <p className="flex-grow lg:px-6 px-2">1</p>
-                <button className="border-l border-gray-400 py-2 px-4">
-                  <Plus />
-                </button>
-              </div>
-              <div className="flex items-center space-x-2 ml-3 lg:ml-0">
-                <h4>$259.00</h4>
-                <button>
-                  <Trash2 className="text-red-500 w-5 h-5" />
-                </button>
-              </div>
-            </div>
+            {/* Cart Product */}
+            {cartItems.length>0?cartItems.map((item:any,i:number)=><CartProduct cartItem={item} key={i}/>):<p>No Items</p>}
+   
+             
           </div>
           {/* Coupon Form */}
           <div className="flex items-center gap-2 py-8">

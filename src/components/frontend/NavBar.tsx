@@ -4,6 +4,7 @@ import logo from "../../../public/Logo-Front.png";
 import Image from "next/image";
 import { DoorOpen, Search, ShoppingCart, User } from "lucide-react";
 import ThemeSwitcherBtn from "../ThemeSwitcher";
+import CartCount from "./CartCount";
 
 const NavBar = () => {
   return (
@@ -48,17 +49,7 @@ const NavBar = () => {
             <span>Login</span>
           </Link>
 
-          <Link
-            href="/cart"
-            type="button"
-            className="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-transparent rounded-lg "
-          >
-            <ShoppingCart className="text-green-700 dark:text-green-500" />
-            <span className="sr-only">Cart</span>
-            <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500  rounded-full -top-0 end-6 dark:border-gray-900">
-              2
-            </div>
-          </Link>
+        <CartCount/>
         </div>
         <ThemeSwitcherBtn />
       </div>
