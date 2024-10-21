@@ -28,12 +28,11 @@ export default function RegisterForm({ role = "USER" }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...data, role }),  // Include the role in the request
+        body: JSON.stringify({ ...data, role }),  
       });
 
- 
       const responseData = await response.json();
-  
+
       if (response.status == 400) {
         setEmailErr("User With this Email already exists");
         toast.error("User With this Email already exists");
@@ -44,11 +43,10 @@ export default function RegisterForm({ role = "USER" }) {
         setLoading(false);
         toast.success("User Created Successfully");
         reset();
-     
+
         if (role === "USER") {
           router.push("/");
-        } else{
-       
+        } else {
           router.push(`/onboarding/${responseData.id}`);
         }
       } else {
@@ -57,8 +55,7 @@ export default function RegisterForm({ role = "USER" }) {
       }
     } catch (error) {
       setLoading(false);
-      console.log(error)
-   
+      console.log(error);
     }
   }
 
@@ -89,8 +86,9 @@ export default function RegisterForm({ role = "USER" }) {
         errors={errors}
         className="md:col-span-2 mb-3"
       />
-      {emailErr && <small className="text-red-600 -mt-2 mb-2">{emailErr}</small>}
-
+      {emailErr && (
+        <small className="text-red-600 -mt-2 mb-2">{emailErr}</small>
+      )}
       <TextInput
         label="Password"
         name="password"
@@ -103,16 +101,36 @@ export default function RegisterForm({ role = "USER" }) {
         buttonTitle="Register"
         loadingButtonTitle="Creating account please wait..."
       />
-
       <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
         Already have an account?{" "}
         <Link
           href="/login"
           className="font-medium text-green-400 hover:underline dark:text-green-500"
         >
-          Login
+          Login!
         </Link>
       </p>
+      {role === "USER" ? (
+        <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
+          Are You Supplier?{" "}
+          <Link
+            href="/register-supplier"
+            className="font-medium text-green-400 hover:underline dark:text-green-500"
+          >
+            Register as Supplier!
+          </Link>
+        </p>
+      ) : (
+        <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
+          Are You Normal User?{" "}
+          <Link
+            href="/register"
+            className="font-medium text-green-400 hover:underline dark:text-green-500"
+          >
+            Register as User!
+          </Link>
+        </p>
+      )}
     </form>
   );
 }

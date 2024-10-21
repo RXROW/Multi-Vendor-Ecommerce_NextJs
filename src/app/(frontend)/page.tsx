@@ -5,6 +5,8 @@ import MarketsList from '@/components/frontend/MarketsList';
 import CategoryList from '@/components/frontend/CategoryList';
 import CommunityTrainings from '@/components/frontend/CommunityTrainings';
 import { getData } from '@/lib/getData';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/authOptions';
 
 export default async function Home() {
   let categories = [];
@@ -16,6 +18,9 @@ export default async function Home() {
     console.error("Error fetching categories: ", error);
   }
 
+
+  const session= await getServerSession(authOptions)
+  console.log("session user "+session?.user?.name)
   return (
     <div className="min-h-screen">
       <Hero />

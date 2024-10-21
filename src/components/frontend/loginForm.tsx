@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
- 
+import { signIn } from "next-auth/react"; // Import next-auth signIn function
 import SubmitButton from "../FormInputs/SubmitButton";
 import TextInput from "../FormInputs/TextInput";
 import { toast } from "react-toastify";
@@ -19,49 +19,34 @@ export default function LoginForm() {
   } = useForm();
   const [loading, setLoading] = useState(false);
   const [emailErr, setEmailErr] = useState("");
+
   async function onSubmit(data: any) {
     try {
-      console.log(data);
       setLoading(true);
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-      const response = await fetch(`${baseUrl}/api/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+
+      // Call NextAuth signIn method
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
       });
 
-      const responseData = await response.json();
-      if (response.ok) {
-        console.log(responseData);
-        setLoading(false);
-        toast.success("User Created Successfully");
-        reset();
-        router.push("/");
-        // If role=user => homepage ,
-        // If role=supplier => onboarding page ,
-        // const userRole=responseData.data.role
-        // if (role === "USER") {
-        //   router.push("/");
-        // } else {
-        //   router.push(`/onboarding/${responseData.data.id}`);
-        // }
+      setLoading(false);
+
+      if (result?.error) {
+        // Display the error message to the user
+        setEmailErr(result.error);
+        toast.error(result.error);
       } else {
-        setLoading(false);
-        if (response.status === 409) {
-          setEmailErr("User with this Email already exists");
-          toast.error("User with this Email already exists");
-        } else {
-          // Handle other errors
-          console.error("Server Error:", responseData.error);
-          toast.error("Oops Something Went wrong");
-        }
+        // Successful login
+        toast.success("Login Successful");
+        reset();
+        router.push("/"); // Redirect after successful login
       }
     } catch (error) {
       setLoading(false);
-      console.error("Network Error:", error);
-      toast.error("Something Went wrong, Please Try Again");
+      console.error("Login error:", error);
+      toast.error("Something went wrong, Please try again");
     }
   }
 
@@ -91,8 +76,8 @@ export default function LoginForm() {
       <SubmitButton
         isLoading={loading}
         buttonTitle="Login"
-        loadingButtonTitle="Singing you in please wait..."
-        className="w-full text-center "
+        loadingButtonTitle="Signing you in, please wait..."
+        className="w-full text-center"
       />
       <div className="flex items-center ">
         <div className="w-full bg-slate-500 h-[1px]"></div>
