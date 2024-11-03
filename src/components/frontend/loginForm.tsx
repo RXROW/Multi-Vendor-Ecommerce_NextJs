@@ -23,8 +23,6 @@ export default function LoginForm() {
   async function onSubmit(data: any) {
     try {
       setLoading(true);
-
-      // Call NextAuth signIn method
       const result = await signIn("credentials", {
         redirect: false,
         email: data.email,

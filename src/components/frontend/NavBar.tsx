@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import logo from "../../../public/Logo-Front.png";
@@ -5,13 +7,19 @@ import Image from "next/image";
 import { DoorOpen, Search, ShoppingCart, User } from "lucide-react";
 import ThemeSwitcherBtn from "../ThemeSwitcher";
 import CartCount from "./CartCount";
+import { useSession } from "next-auth/react";
+import UserAvatar from "../back-office/UserAvatar";
 
 const NavBar = () => {
+  const { data: session, status } = useSession();
+  if (status === "loading") {
+    return <p> Loading........</p>;
+  }
   return (
     <div className="  bg-slate-100 dark:bg-slate-700">
       <div className="flex items-center justify-between py-3 max-w-6xl mx-auto gap-8">
         <Link className="" href="/">
-    <Image src={logo} width={100} height={100} alt="logo"/>
+          <Image src={logo} width={100} height={100} alt="logo" />
         </Link>
         {/* SEARCH */}
         <div className="flex-grow">
@@ -41,15 +49,20 @@ const NavBar = () => {
           </form>
         </div>
         <div className="lg:flex gap-8 hidden">
-          <Link
-            href="/login"
-            className="flex items-center space-x-1 text-green-950 dark:text-slate-100"
-          >
-            <User />
-            <span>Login</span>
-          </Link>
+          { status==="unauthenticated" ?(
+    <Link
+    href="/login"
+    className="flex items-center space-x-1 text-green-950 dark:text-slate-100"
+  >
+    <User />
+    <span>Login</span>
+  </Link>
+          ) :(
+             <UserAvatar user={session?.user}/>
+          )}
+      
 
-        <CartCount/>
+          <CartCount />
         </div>
         <ThemeSwitcherBtn />
       </div>

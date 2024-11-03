@@ -6,6 +6,10 @@ const nextConfig = {
   images: {
     domains: ['utfs.io', 'res.cloudinary.com'], // Add any other domains you need
   },
+  experimental: {
+    middlewarePrefetch: true, 
+  },
 };
 
 export default nextConfig;
+ 

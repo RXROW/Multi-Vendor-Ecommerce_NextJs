@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import '../globals.css';
 import Hero from '@/components/frontend/Hero';
 import MarketsList from '@/components/frontend/MarketsList';
@@ -13,14 +12,14 @@ export default async function Home() {
   
   try {
     categories = await getData("categories");
-    console.log("categories: ", categories);
   } catch (error) {
     console.error("Error fetching categories: ", error);
   }
 
 
   const session= await getServerSession(authOptions)
-  console.log("session user "+session?.user?.name)
+  console.log("session user ")
+  console.log(session?.user)
   return (
     <div className="min-h-screen">
       <Hero />
