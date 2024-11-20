@@ -36,7 +36,7 @@ const CartSubTotalCard = ({ subTotal }: any) => {
       </div>
 
       <Link
-        href="#"
+        href="/checkout"
         className="bg-slate-200 text-slate-900 rounded-md py-4 px-4 w-full text-center font-bold transition-all hover:bg-black hover:text-white"
       >
         Continue to Payment

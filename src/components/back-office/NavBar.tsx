@@ -14,9 +14,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import ThemeSwitcher from "../ThemeSwitcher";
-
-// Define types for props
-interface NavBarProps {
+ interface NavBarProps {
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -29,8 +27,6 @@ const NavBar: React.FC<NavBarProps> = ({ setShowSidebar }) => {
 
       <div className="flex space-x-3 pr-10">
         <ThemeSwitcher />
-
-        {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div
@@ -71,7 +67,6 @@ const NavBar: React.FC<NavBarProps> = ({ setShowSidebar }) => {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* User Profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex items-center space-x-2 cursor-pointer">

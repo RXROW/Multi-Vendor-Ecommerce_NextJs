@@ -1,9 +1,29 @@
+ 
+
 import db from "./db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcryptjs";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+ 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+      role?: string | null;
+    };
+  }
 
+  interface JWT {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    role?: string | null;
+  }
+}
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   secret: process.env.NEXTAUTH_SECRET,
@@ -51,11 +71,14 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, token }:any) {
+    async session({ session, token }) {
       if (token) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-        session.user.role = token.role;
+        session.user = {
+          ...session.user,
+          id: token.id as string,
+          email: token.email as string,
+          role: token.role as string,
+        };
       }
       return session;
     },
@@ -64,7 +87,8 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
-        // token.role = user.role;
+           // @ts-ignore
+        token.role = user.role;
       }
       return token;
     },

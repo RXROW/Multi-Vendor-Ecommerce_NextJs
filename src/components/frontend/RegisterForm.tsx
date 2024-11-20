@@ -10,12 +10,7 @@ import { toast } from "react-toastify";
 
 export default function RegisterForm({ role = "USER" }) {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
   const [emailErr, setEmailErr] = useState("");
 
@@ -34,28 +29,33 @@ export default function RegisterForm({ role = "USER" }) {
       const responseData = await response.json();
 
       if (response.status == 400) {
-        setEmailErr("User With this Email already exists");
-        toast.error("User With this Email already exists");
+        setEmailErr("User with this email already exists");
+        toast.error("User with this email already exists");
         setLoading(false);
         reset();
-      }
-      if (response.ok) {
+      } else if (response.ok) {
         setLoading(false);
-        toast.success("User Created Successfully");
+        toast.success("User created successfully");
         reset();
 
+        // Save the JWT token to localStorage
+        localStorage.setItem("token", responseData.token);
+        console.log(responseData.token)
+
+        // Redirect based on role
         if (role === "USER") {
           router.push("/");
         } else {
-          router.push(`/onboarding/${responseData.id}`);
+          router.push(`/onboarding/${responseData.user.id}`);
         }
       } else {
         setLoading(false);
-        toast.error("Oops! Something went wrong on Register Form.");
+        toast.error("Oops! Something went wrong in Register Form.");
       }
     } catch (error) {
       setLoading(false);
-      console.log(error);
+      console.error(error);
+      toast.error("Failed to register");
     }
   }
 
@@ -99,7 +99,7 @@ export default function RegisterForm({ role = "USER" }) {
       <SubmitButton
         isLoading={loading}
         buttonTitle="Register"
-        loadingButtonTitle="Creating account please wait..."
+        loadingButtonTitle="Creating account, please wait..."
       />
       <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
         Already have an account?{" "}
@@ -112,7 +112,7 @@ export default function RegisterForm({ role = "USER" }) {
       </p>
       {role === "USER" ? (
         <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
-          Are You Supplier?{" "}
+          Are you a supplier?{" "}
           <Link
             href="/register-supplier"
             className="font-medium text-green-400 hover:underline dark:text-green-500"
@@ -122,7 +122,7 @@ export default function RegisterForm({ role = "USER" }) {
         </p>
       ) : (
         <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
-          Are You Normal User?{" "}
+          Are you a normal user?{" "}
           <Link
             href="/register"
             className="font-medium text-green-400 hover:underline dark:text-green-500"

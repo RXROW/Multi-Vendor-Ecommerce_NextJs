@@ -1,10 +1,9 @@
 "use client";
-
 import React from "react";
 import Link from "next/link";
 import logo from "../../../public/Logo-Front.png";
 import Image from "next/image";
-import { DoorOpen, Search, ShoppingCart, User } from "lucide-react";
+import { DoorOpen, Search, User } from "lucide-react";
 import ThemeSwitcherBtn from "../ThemeSwitcher";
 import CartCount from "./CartCount";
 import { useSession } from "next-auth/react";
