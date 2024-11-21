@@ -5,10 +5,10 @@ import React from "react";
 
 const CheckOut = () => {
   const steps = [
-    { label: "Personal Information", href: "/personal-info" },
-    { label: "Shipping Address", href: "/shipping-address" },
-    { label: "Payment Method", href: "/payment-method" },
-    { label: "Order Summary", href: "/order-summary" },
+    { number:1, label: "Personal Information",},
+    { number:2, label: "Shipping Address",},
+    { number:3, label: "Payment Method", },
+    { number:4, label: "Order Summary",},
   ];
 
   return (
@@ -18,7 +18,12 @@ const CheckOut = () => {
     >
       <div className="max-w-3xl p-4 my-6 mx-auto border rounded-sm">
         {/* Steps Component */}
-        <Steps steps={steps} /> {/* Assuming 4 items in the cart */}
+
+        <Steps steps={steps} />
+        
+        
+        
+         {/* Assuming 4 items in the cart */}
         <div className=" w-full p-4 bg-white   dark:bg-gray-800 dark:border-gray-700  rounded-lg shadow sm:p-6 nd:p-8 my-4 ">
           {/* Banner */}
           <CardBanner/>

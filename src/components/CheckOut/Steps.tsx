@@ -1,12 +1,16 @@
+"use client"
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { useSelector } from "react-redux";
 
 interface StepsProps {
   steps: any;
 }
 
 const Steps: React.FC<StepsProps> = ({ steps }) => {
+  const currentStep = useSelector((store: any) => store.checkout.currentStep);
+
   return (
     <div className="flex">
       <ol
@@ -30,13 +34,20 @@ const Steps: React.FC<StepsProps> = ({ steps }) => {
             <div className="flex items-center">
               <ChevronRight className="flex-shrink-0 w-4 h-4 text-gray-400" />
               <div className="-m-1">
-                <Link
-                  href={step.href}
-                  title={step.label}
-                  className="p-1 ml-1.5 text-sm font-medium   text-gray-500 rounded-md focus:outline-none focus:ring-1 focus:ring-green-400 focus:text-gray-900 hover:text-gray-700"
+                <p
+                className={`
+                  
+      p-1 ml-1.5 text-sm font-medium 
+        text-gray-500 rounded-md focus:outline-none focus:ring-1
+        ${step.number ===currentStep?" text-lime-400 font-bold":""}
+         focus:ring-green-400 focus:text-gray-900
+         
+
+                  `}
+             
                 >
                   {step.label}
-                </Link>
+                </p>
               </div>
             </div>
           </li>

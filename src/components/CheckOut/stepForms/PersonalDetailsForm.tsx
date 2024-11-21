@@ -17,14 +17,12 @@ interface PersonalInfoFormValues {
 
 export default function PersonalInfoForm() {
   const [loading, setLoading] = useState<boolean>(false);
-  const dispatch = useDispatch(); // Typed dispatch
-  const currentStep = useSelector((store: any) => store.checkout.currentStep); // Typed selector
+  const dispatch = useDispatch();
+  const currentStep = useSelector((store: any) => store.checkout.currentStep);
   const personalInfo = useSelector((store: any) => store.checkout.personalInfo);
 
   const {
     register,
-    reset,
-    watch,
     handleSubmit,
     formState: { errors },
   } = useForm<PersonalInfoFormValues>({
@@ -34,21 +32,38 @@ export default function PersonalInfoForm() {
   });
 
   const processData: SubmitHandler<PersonalInfoFormValues> = (data) => {
-    console.log(data);
-    // Increment the current step by 1 and dispatch the action
-    dispatch(setCurrentStep(currentStep + 1));
-    // Update the personalInfo
-    dispatch(updatePersonalInfo(data));
+    setLoading(true);
+    try {
+      console.log(data);
+      // Update Redux with personal info
+      dispatch(updatePersonalInfo(data));
+      // Move to the next step
+      dispatch(setCurrentStep(currentStep + 1));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      dispatch(setCurrentStep(currentStep - 1));
+    }
   };
 
   return (
-    <form className=" py-4" onSubmit={handleSubmit(processData)}>
+    <form
+      className="py-4 bg-gray-800 rounded-lg shadow-md"
+      onSubmit={handleSubmit(processData)} // Handle form submission
+    >
+      {/* Header */}
       <div className="mb-8">
-        <h3 className="text-xl md:text-3xl font-bold text-lime-400 ">
-          Personal info
+        <h3 className="text-xl md:text-3xl font-bold text-lime-400">
+          Personal Info
         </h3>
-       </div>
-      <div className="grid gap-x-4 gap-y-10 grid-cols-2 ">
+      </div>
+
+      {/* Form Fields */}
+      <div className="grid gap-x-4 gap-y-10 grid-cols-2">
         <TextInput
           label="Full Name"
           name="fullName"
@@ -62,7 +77,7 @@ export default function PersonalInfoForm() {
           type="email"
           register={register}
           errors={errors}
-              className="w-full"
+          className="w-full"
         />
         <TextInput
           label="Phone Number"
@@ -70,18 +85,22 @@ export default function PersonalInfoForm() {
           type="number"
           register={register}
           errors={errors}
-              className="w-full"
+          className="w-full"
         />
         <TextInput
           label="Billing Address"
           name="billingAddress"
           register={register}
           errors={errors}
-              className="w-full"
+          className="w-full"
         />
       </div>
 
-      <NavButtons />
+      {/* Navigation Buttons */}
+      <NavButtons
+        onPrevious={handlePrevious}
+        disablePrevious={currentStep <= 1}
+      />
     </form>
   );
 }
