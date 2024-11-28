@@ -8,7 +8,7 @@ import BreadCrump from "@/components/frontend/BreadCrump"
 
  
 
-interface CartItem {
+ export interface CartItem {
   id: string
   salePrice: number
   qty: number

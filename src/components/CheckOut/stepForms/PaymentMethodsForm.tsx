@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentStep, updateShippingInfo } from "@/redux/slices/checkoutSlice";
+import { setCurrentStep, updatePaymentMethod } from "@/redux/slices/checkoutSlice";
 import NavButtons from "../NavButtons";
 import { Circle, CreditCard, HeartHandshake } from "lucide-react";
 
@@ -28,7 +28,7 @@ export default function PaymentMethodsForm() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const currentStep = useSelector((store: any) => store.checkout.currentStep);
-  const shippingInfo = useSelector((store: any) => store.checkout.shippingInfo);
+  const paymentMethod = useSelector((store: any) => store.checkout.paymentMethod);
 
   const {
     register,
@@ -36,20 +36,21 @@ export default function PaymentMethodsForm() {
     formState: { errors },
   } = useForm<PaymentMethodsFormData>({
     defaultValues: {
-      paymentMethod: shippingInfo?.paymentMethod || "",
+      paymentMethod: paymentMethod || "",
     },
   });
 
-  async function processData(data: PaymentMethodsFormData) {
+  const processData: SubmitHandler<PaymentMethodsFormData> = async (data) => {
     setLoading(true);
     try {
-      console.log("Form Data:", data);
-      dispatch(updateShippingInfo({ ...shippingInfo, paymentMethod: data.paymentMethod }));
+      // Dispatch data to Redux
+      dispatch(updatePaymentMethod(data));
       dispatch(setCurrentStep(currentStep + 1));
+      console.log("Form data submitted:", data);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
@@ -113,8 +114,7 @@ export default function PaymentMethodsForm() {
       <NavButtons
         onPrevious={handlePrevious}
         disablePrevious={currentStep <= 1}
-     
-      />
+       />
     </form>
   );
 }

@@ -5,11 +5,16 @@ import { ChevronRight } from "lucide-react";
 
 const OrderSummary = () => {
   const cartItems = useSelector((state: any) => state.cart);
+  const combinedData = useSelector((store: any) => store.checkout.combinedData);
 
   // Define the submitData function
   async function submitData() {
-    // Log the cart items when the button is clicked
-    console.log("Checkout Form Data:", cartItems);
+   
+    let CartToOrder={
+      combinedData,
+      cartItems
+    }
+    console.log("CartToOrder:",CartToOrder );
 
     // You can also handle the API submission here if needed
     // For example:

@@ -2,15 +2,17 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CheckoutState {
   currentStep: number;
-  personalInfo: Record<string, any>; // Replace `any` with specific types if possible
-  shippingInfo: Record<string, any>; // Replace `any` with specific types if possible
-  combinedData: Record<string, any>;  // Replace `any` with specific types if possible
+  personalInfo: Record<string, any>; 
+  shippingInfo: Record<string, any>; 
+  paymentMethod:Record<string, any>; 
+  combinedData: Record<string, any>;  
 }
 
 const initialState: CheckoutState = {
   currentStep: 1,
   personalInfo: {},
   shippingInfo: {},
+  paymentMethod:{},
   combinedData: {},
 };
 
@@ -35,10 +37,18 @@ const checkoutSlice = createSlice({
         ...action.payload,
       };
     },
+    updatePaymentMethod: (state, action: PayloadAction<Record<string, any>>) => {
+      state.paymentMethod = { ...state.paymentMethod, ...action.payload };
+      state.combinedData = {
+        ...state.combinedData,
+        ...action.payload,
+      };
+    },
     updateCombinedData: (state, action: PayloadAction<Record<string, any>>) => {
       state.combinedData = {
         ...state.personalInfo,
         ...state.shippingInfo,
+        ...state.paymentMethod,
         ...action.payload,
       };
     },
@@ -49,6 +59,7 @@ export const {
   setCurrentStep,
   updatePersonalInfo,
   updateShippingInfo,
+  updatePaymentMethod,
   updateCombinedData,
 } = checkoutSlice.actions;
 

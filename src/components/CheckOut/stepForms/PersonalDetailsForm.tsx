@@ -6,16 +6,20 @@ import { useDispatch, useSelector } from "react-redux";
 import TextInput from "@/components/FormInputs/TextInput";
 import NavButtons from "../NavButtons";
 import { setCurrentStep, updatePersonalInfo } from "@/redux/slices/checkoutSlice";
+import { useSession } from "next-auth/react";
 
 // Define the form input types
 interface PersonalInfoFormValues {
   fullName: string;
   email: string;
   phone: string;
+  userId:any;
   billingAddress: string;
 }
 
 export default function PersonalInfoForm() {
+  const {data:session,status}=useSession();
+  const userId=session?.user.id
   const [loading, setLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const currentStep = useSelector((store: any) => store.checkout.currentStep);
@@ -35,6 +39,7 @@ export default function PersonalInfoForm() {
     setLoading(true);
     try {
       console.log(data);
+      data.userId=userId;
       // Update Redux with personal info
       dispatch(updatePersonalInfo(data));
       // Move to the next step

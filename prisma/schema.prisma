@@ -105,6 +105,8 @@ model Product {
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime? @updatedAt
+
+  OrderItem OrderItem[]
 }
 
 
@@ -116,10 +118,8 @@ model Training{
   description  String?
   content      String?
   isActive     Boolean
- 
   categoryId String @db.ObjectId
   category   Category?  @relation(fields: [categoryId], references: [id])
-   
   createdAt  DateTime  @default(now())
   updatedAt  DateTime? @updatedAt
       
@@ -141,14 +141,12 @@ model User {
   email            String?   @unique
   password         String   
   emailVerified    DateTime?
-
   products  Product[]
   role             UserRole  @default(USER)  
-
   supplierProfile  SupplierProfile?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
-
+  orders Order[] 
 }
 
 
@@ -189,4 +187,38 @@ model Staff {
   code             String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+}
+
+
+
+model Order {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String    @db.ObjectId @unique
+  firstName      String
+  lastName       String
+  emailAddress   String
+  phoneNumber    String
+  streetAddress  String
+  city           String
+  country        String
+  district       String
+  shippingCost   Float
+  paymentMethod  String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItem OrderItem[]
+}
+
+
+model OrderItem {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  orderId     String    @db.ObjectId
+  productId   String    @db.ObjectId
+  quantity    Int
+  price       Float
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  order       Order     @relation(fields: [orderId], references: [id])
+  product     Product   @relation(fields: [productId], references: [id])
 }
