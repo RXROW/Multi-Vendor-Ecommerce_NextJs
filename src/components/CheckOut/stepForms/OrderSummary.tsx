@@ -1,33 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
+import { makePostRequest } from "@/lib/apiRequest";
+import { useRouter } from "next/navigation";
+
+interface CartItem {
+  imageUrl: string;
+  title: string;
+  qty: number;
+  salePrice: number;
+}
+
+interface RootState {
+  cart: CartItem[];
+  checkout: {
+    combinedData: Record<string, any>;
+  };
+}
 
 const OrderSummary = () => {
-  const cartItems = useSelector((state: any) => state.cart);
-  const combinedData = useSelector((store: any) => store.checkout.combinedData);
-
-  // Define the submitData function
-  async function submitData() {
-   
-    let CartToOrder={
+  const [loading, setLoading] = useState(false);
+  const cartItems = useSelector((state: RootState) => state.cart);
+  const combinedData = useSelector((state: RootState) => state.checkout.combinedData);
+  const router = useRouter();
+  const submitData = async () => {
+    const data = {
       combinedData,
       cartItems
+    };
+    
+    try {
+      await makePostRequest(
+        setLoading,
+        "api/orders",
+        data,
+        "Order",
+        () => {}, 
+        () => {router.push("/order-conformation");} 
+      );
+    } catch (error) {
+      console.error("Order submission failed:", error);
     }
-    console.log("CartToOrder:",CartToOrder );
-
-    // You can also handle the API submission here if needed
-    // For example:
-    // const response = await fetch('/api/submitOrder', {
-    //   method: 'POST',
-    //   body: JSON.stringify(cartItems),
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
-    // const result = await response.json();
-    // console.log(result);
-  }
+  };
 
   return (
     <div className="p-6 rounded-lg max-w-3xl mx-auto">
@@ -37,12 +52,11 @@ const OrderSummary = () => {
 
       <div className="space-y-4">
         {cartItems.length > 0 ? (
-          cartItems.map((cartItem: any, i: number) => (
+          cartItems.map((cartItem: CartItem, i: number) => (
             <div
               key={i}
               className="flex items-center justify-between gap-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-md shadow-sm"
             >
-              {/* Product Image */}
               <Image
                 src={cartItem.imageUrl}
                 alt={cartItem.title}
@@ -51,7 +65,6 @@ const OrderSummary = () => {
                 className="rounded-lg object-cover w-20 h-20"
               />
 
-              {/* Product Details */}
               <div className="flex-grow">
                 <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">
                   {cartItem.title}
@@ -61,7 +74,6 @@ const OrderSummary = () => {
                 </p>
               </div>
 
-              {/* Product Price */}
               <div className="text-right">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                   ${cartItem.salePrice.toFixed(2)}
@@ -77,11 +89,12 @@ const OrderSummary = () => {
       </div>
 
       <button
-        onClick={submitData} // Attach the click handler here
+        onClick={submitData}
+        disabled={loading}
         className="flex items-center px-5 py-2 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-slate-900 rounded-lg focus:ring-4 focus:ring-green-200 dark:focus:ring-green-900 hover:bg-slate-800 dark:bg-green-600 dark:hover:bg-green-700"
       >
-        Proceed to Payment
-        <ChevronRight className="w-5 h-5 ml-2" />
+        {loading ? "Processing Please Wait..." : "Proceed to Payment"}
+        {!loading && <ChevronRight className="w-5 h-5 ml-2" />}
       </button>
     </div>
   );

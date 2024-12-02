@@ -1,57 +1,99 @@
-// import { NextRequest, NextResponse } from "next/server";
-// import db from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+import db from "@/lib/db";
 
-// export async function POST(request: NextRequest) {
-//   try {
-//     const {
+export async function POST(request: NextRequest) {
+  try {
+    const { combinedData, cartItems } = await request.json();
+    
+    const {
+      city,
+      country,
+      district,
+      email,
+      fristName, // Fixed typo
+      lastName,
+      paymentMethod,
+      phone,
+      streetAddress,
+      userId,
+    } = combinedData;
 
-//      } =  await request.json();
-   
-//     if (!categoryIds || !Array.isArray(categoryIds)) {
-//       return NextResponse.json(
-//         { message: "Invalid category IDs provided" },
-//         { status: 400 }
-//       );
-//     }
-//     const newMarket = await db.market.create({
-//       data: {
-//         title,
-//          logoUrl,
-//         description,
-//         isActive,
-//         categoryIds,
-//       },
-//     });
-//     return NextResponse.json(newMarket, { status: 201 });
-//   } catch (error) {
-//     console.error("Error creating market:", error);
-//     return NextResponse.json(
-//       {
-//         message: "Failed to create market",
-//         error: error,
-//       },
-//       { status: 500 }
-//     );
-//   }
-// }
+    if (!userId || !fristName || !lastName || !email || !phone || !streetAddress || !city || !country) {
+      return NextResponse.json(
+        { message: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const newOrder = await db.order.create({
+      data: {
+        userId,
+        fristName, 
+        lastName,
+        emailAddress: email,
+        phoneNumber: phone,
+        streetAddress,
+        city,
+        country,
+        district,
+        shippingCost: 10.99,
+        paymentMethod,
+      },
+    });
+
+    // Create order items using cartItems  
+  const newOrderItems  =   await db.orderItem.createMany({
+      data: cartItems.map((item:any) => ({  
+        productId:item.id,
+        quantity:parseInt(item.qty),
+        price:parseFloat(item.salePrice),  
+        orderId: newOrder.id,
+      })),
+    });
+    console.log("Form DB=> "+newOrder,newOrderItems)
+
+    return NextResponse.json(newOrder, { status: 201 });
+  } catch (error) {
+    console.error("Error creating order:", error);
+    return NextResponse.json(
+      { message: "Failed to create order", error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 }
+    );
+  }
+}
 
 
-// // export async function GET(request:NextRequest) {
-// //   try {
-// //     const markets = await db.market.findMany({
-// //       orderBy: {
-// //         createdAt: "desc",
-// //       },
-// //     });
-// //     return NextResponse.json(markets);
-// //   } catch (error) {
-// //     console.log(error);
-// //     return NextResponse.json(
-// //       {
-// //         message: "Failed to fetch markets",
-// //         error,
-// //       },
-// //       { status: 500 }
-// //     );
-// //   }
-// // }
+
+
+
+
+
+
+ 
+
+
+ 
+ 
+
+
+
+export async function GET(request: NextRequest) {
+  try {
+    const orders = await db.order.findMany({
+      include: { // Added to include related order items
+        orderItem: true
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    
+    return NextResponse.json(orders, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch orders", error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 }
+    );
+  }
+}

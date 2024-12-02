@@ -70,8 +70,15 @@ export default function PersonalInfoForm() {
       {/* Form Fields */}
       <div className="grid gap-x-4 gap-y-10 grid-cols-2">
         <TextInput
-          label="Full Name"
-          name="fullName"
+          label="Frist Name"
+          name="fristName"
+          register={register}
+          errors={errors}
+          className="w-full"
+        />
+        <TextInput
+          label="Last Name"
+          name="lastName"
           register={register}
           errors={errors}
           className="w-full"
@@ -92,13 +99,7 @@ export default function PersonalInfoForm() {
           errors={errors}
           className="w-full"
         />
-        <TextInput
-          label="Billing Address"
-          name="billingAddress"
-          register={register}
-          errors={errors}
-          className="w-full"
-        />
+       
       </div>
 
       {/* Navigation Buttons */}

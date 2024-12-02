@@ -9,6 +9,7 @@ import {
 import TextInput from "@/components/FormInputs/TextInput";
 import NavButtons from "../NavButtons";
  
+ 
 export default function ShippingInfoForm() {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ export default function ShippingInfoForm() {
   } = useForm({
     defaultValues: {
       ...shippingInfo,
-    },
+     },
   });
 
   async function processData(data: any) {
@@ -53,11 +54,9 @@ export default function ShippingInfoForm() {
         <TextInput label="City" name="city" register={register} errors={errors} className="w-full" />
         <TextInput label="Country" name="country" register={register} errors={errors} className="w-full" />
         <TextInput label="District" name="district" register={register} errors={errors} className="w-full" />
-      </div>
-
+      </div>   
       {/* Nav Buttons */}
       <NavButtons onPrevious={handlePrevious} disablePrevious={currentStep <= 1} />
     </form>
   );
 }
-
