@@ -87,7 +87,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
-           // @ts-ignore
+  
         token.role = user.role;
       }
       return token;

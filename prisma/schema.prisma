@@ -203,13 +203,21 @@ model Order {
   country        String
   district       String
   shippingCost   Float
+  orderStatus    OrderStatus @default(PROCESSING) // Set PROCESSING as the default value
   paymentMethod  String
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   orderItem OrderItem[]
 }
-
+// Add this enum at the top-level of your schema
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELED
+}
 
 model OrderItem {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
@@ -217,6 +225,9 @@ model OrderItem {
   productId   String    @db.ObjectId
   quantity    Int
   price       Float
+  imageUrl    String? 
+  title       String?
+  orderNumber String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   order       Order     @relation(fields: [orderId], references: [id])

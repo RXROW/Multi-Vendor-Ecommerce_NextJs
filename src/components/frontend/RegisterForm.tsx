@@ -3,134 +3,164 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
+ 
 import { useForm } from "react-hook-form";
+ 
 import SubmitButton from "../FormInputs/SubmitButton";
 import TextInput from "../FormInputs/TextInput";
-import { toast } from "react-toastify";
 
-export default function RegisterForm({ role = "USER" }) {
+// Define available roles
+type UserRole = "USER" | "SUPPLIER";
+
+ 
+
+ 
+interface RegisterFormProps {
+  role?: UserRole;
+}
+
+export default function RegisterForm({ role = "USER" }: RegisterFormProps) {
   const router = useRouter();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const [loading, setLoading] = useState(false);
-  const [emailErr, setEmailErr] = useState("");
+  const [emailError, setEmailError] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm({
+ 
+    defaultValues: {
+      role
+    }
+  });
 
   async function onSubmit(data: any) {
     setLoading(true);
+    setEmailError("");
+
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
       const response = await fetch(`${baseUrl}/api/users`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ...data, role }),  
+        body: JSON.stringify(data)
       });
 
       const responseData = await response.json();
 
-      if (response.status == 400) {
-        setEmailErr("User with this email already exists");
-        toast.error("User with this email already exists");
-        setLoading(false);
-        reset();
-      } else if (response.ok) {
-        setLoading(false);
-        toast.success("User created successfully");
-        reset();
-
-        // Save the JWT token to localStorage
-        localStorage.setItem("token", responseData.token);
-        console.log(responseData.token)
-
-        // Redirect based on role
-        if (role === "USER") {
-          router.push("/");
-        } else {
-          router.push(`/onboarding/${responseData.user.id}`);
+      if (!response.ok) {
+        if (response.status === 400) {
+          setEmailError("User with this email already exists");
+          toast.error("User with this email already exists");
+          reset();
+          return;
         }
-      } else {
-        setLoading(false);
-        toast.error("Oops! Something went wrong in Register Form.");
+        throw new Error(responseData.message || "Registration failed");
       }
+
+      // Save the JWT token to localStorage
+      if (responseData.token) {
+        localStorage.setItem("token", responseData.token);
+      }
+
+      toast.success("User created successfully");
+      reset();
+
+      // Redirect based on role
+      router.push(role === "USER" ? "/" : `/onboarding/${responseData.user.id}`);
     } catch (error) {
+      console.error("Registration error:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to register user"
+      );
+    } finally {
       setLoading(false);
-      console.error(error);
-      toast.error("Failed to register");
     }
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="">
-      <TextInput
-        label={`Register as ${role}`}
-        name="role"
-        type="hidden"
-        defaultValue={role}
-        register={register}
-        errors={errors}
-        className="md:col-span-2 mb-3"
-      />
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <input type="hidden" {...register("role")} />
+      
       <TextInput
         label="Full Name"
         name="name"
         type="text"
         register={register}
         errors={errors}
-        className="md:col-span-2 mb-3"
+ 
+        className="w-full"
       />
+
       <TextInput
         label="Email Address"
         name="email"
         type="email"
         register={register}
         errors={errors}
-        className="md:col-span-2 mb-3"
+ 
+        className="w-full"
       />
-      {emailErr && (
-        <small className="text-red-600 -mt-2 mb-2">{emailErr}</small>
+      {emailError && (
+        <p className="text-sm text-red-600 mt-1">{emailError}</p>
       )}
+
       <TextInput
         label="Password"
         name="password"
         type="password"
         register={register}
         errors={errors}
+   
+        className="w-full"
       />
+
       <SubmitButton
         isLoading={loading}
         buttonTitle="Register"
-        loadingButtonTitle="Creating account, please wait..."
+        loadingButtonTitle="Creating account..."
       />
-      <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
-        Already have an account?{" "}
-        <Link
-          href="/login"
-          className="font-medium text-green-400 hover:underline dark:text-green-500"
-        >
-          Login!
-        </Link>
-      </p>
-      {role === "USER" ? (
-        <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
-          Are you a supplier?{" "}
+
+      <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+        <p>
+          Already have an account?{" "}
           <Link
-            href="/register-supplier"
+            href="/login"
             className="font-medium text-green-400 hover:underline dark:text-green-500"
           >
-            Register as Supplier!
+            Login
           </Link>
         </p>
-      ) : (
-        <p className="mt-2 text-sm font-light text-gray-500 dark:text-gray-400">
-          Are you a normal user?{" "}
-          <Link
-            href="/register"
-            className="font-medium text-green-400 hover:underline dark:text-green-500"
-          >
-            Register as User!
-          </Link>
+
+        <p>
+          {role === "USER" ? (
+            <>
+              Are you a supplier?{" "}
+              <Link
+                href="/register-supplier"
+                className="font-medium text-green-400 hover:underline dark:text-green-500"
+              >
+                Register as Supplier
+              </Link>
+            </>
+          ) : (
+            <>
+              Are you a normal user?{" "}
+              <Link
+                href="/register"
+                className="font-medium text-green-400 hover:underline dark:text-green-500"
+              >
+                Register as User
+              </Link>
+            </>
+          )}
         </p>
-      )}
+      </div>
     </form>
   );
 }

@@ -1,6 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/db";
 
+function generateOrderNumber(length:number) {
+  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let orderNumber = '';
+
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    orderNumber += characters.charAt(randomIndex);
+  }
+
+  return orderNumber;
+}
+
+
+
+
+
+
+
+
 export async function POST(request: NextRequest) {
   try {
     const { combinedData, cartItems } = await request.json();
@@ -48,6 +67,9 @@ export async function POST(request: NextRequest) {
         quantity:parseInt(item.qty),
         price:parseFloat(item.salePrice),  
         orderId: newOrder.id,
+        imageUrl: item.imageUrl,
+        title: item.title,
+        orderNumber:generateOrderNumber(8),
       })),
     });
     console.log("Form DB=> "+newOrder,newOrderItems)
@@ -61,26 +83,11 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-
-
-
-
-
-
-
  
-
-
- 
- 
-
-
-
 export async function GET(request: NextRequest) {
   try {
     const orders = await db.order.findMany({
-      include: { // Added to include related order items
+      include: {  
         orderItem: true
       },
       orderBy: {

@@ -4,8 +4,11 @@ import React from 'react'
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import { signOut } from 'next-auth/react';
+import Link from 'next/link';
  
 const UserAvatar = ({user}:any) => {
+  const role =user?.role;
+console.log(role)
   const router = useRouter()
   async function handleLogOut() {
     await signOut();
@@ -33,11 +36,23 @@ const UserAvatar = ({user}:any) => {
         </div>
       </DropdownMenuItem>
       <DropdownMenuItem>
-        <div className="flex items-center space-x-2 cursor-pointer">
+        <Link href={"/dashboard/profile"} 
+        className="flex items-center space-x-2 cursor-pointer">
           <Settings className="mr-3 w-4 h-4" />
           <span>Edit Profile</span>
-        </div>
+        </Link>
       </DropdownMenuItem>
+      {
+        role === "USER" &&(
+          <DropdownMenuItem>
+          <Link href={"/dashboard/orders"} 
+          className="flex items-center space-x-2 cursor-pointer">
+            <Settings className="mr-3 w-4 h-4" />
+            <span>My Orders</span>
+          </Link>
+        </DropdownMenuItem>
+        )
+      }
       <DropdownMenuItem>
         <button onClick={handleLogOut} className="flex items-center space-x-2 cursor-pointer">
           <LogOut className="mr-3 w-4 h-4" />

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Image from "next/image";
-import { ChevronRight } from "lucide-react";
-import { makePostRequest } from "@/lib/apiRequest";
-import { useRouter } from "next/navigation";
+import { ChevronRight, LucideAlignHorizontalSpaceBetween } from "lucide-react";
+ import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 interface CartItem {
   imageUrl: string;
@@ -31,18 +31,37 @@ const OrderSummary = () => {
     };
     
     try {
-      await makePostRequest(
-        setLoading,
-        "api/orders",
-        data,
-        "Order",
-        () => {}, 
-        () => {router.push("/order-conformation");} 
-      );
+      setLoading(true);
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      const response = await fetch(`${baseUrl}/api/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+  
+      setLoading(false);
+      const responseData= await response.json()
+      if (response.ok) {
+        toast.success(`New Order Created Successfully`);
+        router.push(`order-confirmed/${responseData.id}`)
+     
+         
+   
+      } else {
+        if (response.status === 409) {
+          toast.error("The Giving Warehouse Stock is NOT Enough");
+        } else {
+          toast.error("Something went wrong");
+        }
+      }
     } catch (error) {
-      console.error("Order submission failed:", error);
+      setLoading(false);
+      console.error(error);
     }
-  };
+  }
+  
 
   return (
     <div className="p-6 rounded-lg max-w-3xl mx-auto">
