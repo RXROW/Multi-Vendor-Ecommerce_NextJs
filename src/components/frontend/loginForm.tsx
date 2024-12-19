@@ -32,14 +32,14 @@ export default function LoginForm() {
       setLoading(false);
 
       if (result?.error) {
-        // Display the error message to the user
+     
         setEmailErr(result.error);
         toast.error(result.error);
       } else {
-        // Successful login
+     
         toast.success("Login Successful");
         reset();
-        router.push("/"); // Redirect after successful login
+        router.push("/");  
       }
     } catch (error) {
       setLoading(false);

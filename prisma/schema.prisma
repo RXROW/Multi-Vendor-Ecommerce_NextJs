@@ -191,9 +191,10 @@ model Staff {
 
 
 
+ 
 model Order {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String    @db.ObjectId @unique
+  userId         String    @db.ObjectId
   fristName      String
   lastName       String
   emailAddress   String
@@ -203,13 +204,14 @@ model Order {
   country        String
   district       String
   shippingCost   Float
-  orderStatus    OrderStatus @default(PROCESSING) // Set PROCESSING as the default value
+  orderStatus    OrderStatus @default(PROCESSING)
   paymentMethod  String
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orderItem OrderItem[]
+  orderItem      OrderItem[]
 }
+
 // Add this enum at the top-level of your schema
 enum OrderStatus {
   PENDING
