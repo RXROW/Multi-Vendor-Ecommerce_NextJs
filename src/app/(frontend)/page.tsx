@@ -9,7 +9,7 @@ import { authOptions } from '@/lib/authOptions';
 
 export default async function Home() {
   let categories = [];
-  
+
   try {
     categories = await getData("categories");
   } catch (error) {
@@ -17,9 +17,8 @@ export default async function Home() {
   }
 
 
-  const session= await getServerSession(authOptions)
-  console.log("session user ")
-  console.log(session?.user)
+  const session = await getServerSession(authOptions)
+
   return (
     <div className="min-h-screen">
       <Hero />
